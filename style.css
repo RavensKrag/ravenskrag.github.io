@@ -1,0 +1,80 @@
+ul{
+  /*list-style-type: square*/
+}
+
+ul > li::marker{
+  color: #6630D9;
+  /*font-size: 3em;*/
+  /*line-height: 2em;*/
+  /*padding: 0px;
+  margin: 0px;
+  
+  padding-top: 200px;*/
+  /*list-style-position: inside;*/
+}
+
+
+#main{
+  margin: 30px;
+}
+
+
+#header{
+  /*background-color: #ff0000;*/
+}
+
+#header ul{
+  /*padding: 0px;*/
+  margin: 0px;
+}
+
+#header p{
+  margin: 0px;
+}
+
+#header h1{
+  margin: 0px;
+}
+
+
+#profile-pic {
+  width: 200px;
+  height: 200px;
+}
+
+
+#bio ul{
+  margin-top:    1em;
+  margin-bottom: 1em;
+  padding-left: 2ch;
+  
+}
+
+#bio{
+  display: flex;
+  flex-direction: column;
+  height: 200px;
+  /*padding: 0px;*/
+}
+
+#bio .one{
+  top: 0px;
+  bottom: auto;
+  /*flex-grow: 1;*/
+}
+
+#bio .two{
+  flex-grow: 1;
+}
+
+#bio .three{
+  top: auto;
+  bottom: 0px;
+  /*flex-grow: 1;*/
+}
+
+#sidebar{
+  background-color: #FFAFAF;
+  height: 20em;
+  width: 200px;
+}
