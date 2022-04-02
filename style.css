@@ -3,6 +3,10 @@ h1,h2,h3,h4,h5{
   margin: 0px;
 }
 
+p{
+  margin: 0px;
+}
+
 
 ul{
   /*list-style-type: square*/
@@ -56,12 +60,25 @@ ul > li::marker{
   min-height: 200px;
 }
 
+#sidebar .separator{
+  /*display: block;*/
+  /*border: 0px;*/
+  border-top-width: 1px;
+  border-color: #000000;
+  border-top-style: dotted;
+}
+
+/*select all divs in the grid*/
 #main > div > div{
   margin: .6em;
 }
 
+/*select the container itself*/
 #main{
   margin-top: 1.5rem;
+  /*position: center;*/
+  margin-left: auto;
+  margin-right: auto;
 }
 
 
@@ -124,12 +141,39 @@ ul > li::marker{
   /*flex-grow: 1;*/
 }
 
+
+
 #sidebar{
   background-color: #FFAFAF;
   /*height: 20em;*/
 }
 
+#sidebar h2{
+  font-size: 1.2em;
+  font-style: bold;
+  /*text-decoration: underline;*/
+}
 
+#sidebar h3{
+  font-size: 1em;
+  font-style: bold;
+}
+
+#sidebar .separator{
+  margin-top: 1.2em;
+  margin-bottom: 1.2em;
+}
+
+#sidebar ul.affiliation.previous{
+  list-style: none;
+  padding: 0px;
+}
+
+
+
+#content{
+  max-width: 47ch;
+}
 
 #content h2{
   font-size: 1.4em;
