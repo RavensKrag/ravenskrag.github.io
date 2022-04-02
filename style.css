@@ -13,9 +13,41 @@ ul > li::marker{
   /*list-style-position: inside;*/
 }
 
+.flex.column{
+  display: flex;
+  flex-direction: column;
+}
+
+.flex.row{
+  display: flex;
+  flex-direction: row;
+  /*margin: -20px;*/
+}
+
+.flex.tail{
+  align-self: flex-end;
+}
+
+.flex.head{
+  align-self: flex-end;
+}
+
+.box.width{
+  width: 200px;
+  min-width: 200px;
+}
+
+.box.height{
+  height: 200px;
+  min-height: 200px;
+}
+
+#main > div > div{
+  margin: .6em;
+}
 
 #main{
-  margin: 30px;
+  margin-top: 1.5rem;
 }
 
 
@@ -38,10 +70,15 @@ ul > li::marker{
 
 
 #profile-pic {
-  width: 200px;
-  height: 200px;
+  width: 100%;
+  height: 100%;
+  
 }
 
+
+#bio{
+  flex-grow: 1;
+}
 
 #bio ul{
   margin-top:    1em;
@@ -50,7 +87,7 @@ ul > li::marker{
   
 }
 
-#bio{
+#bio > div{
   display: flex;
   flex-direction: column;
   height: 200px;
@@ -75,6 +112,5 @@ ul > li::marker{
 
 #sidebar{
   background-color: #FFAFAF;
-  height: 20em;
-  width: 200px;
+  /*height: 20em;*/
 }
