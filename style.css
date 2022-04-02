@@ -1,6 +1,20 @@
+h1,h2,h3,h4,h5{
+  border: 0px;
+  margin: 0px;
+}
+
+
 ul{
   /*list-style-type: square*/
+  margin: 0px;
+  padding-left: 3ch;
 }
+
+ul > li {
+  padding-top: 0.25em;
+  padding-bottom: 0.25em;
+}
+
 
 ul > li::marker{
   color: #6630D9;
@@ -113,4 +127,17 @@ ul > li::marker{
 #sidebar{
   background-color: #FFAFAF;
   /*height: 20em;*/
+}
+
+
+
+#content h2{
+  font-size: 1.4em;
+  font-style: bold;
+  text-decoration: underline;
+}
+
+#content h3{
+  font-size: 1em;
+  font-style: bold;
 }
