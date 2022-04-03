@@ -32,6 +32,16 @@ ul > li::marker{
 }
 
 
+.spacer{
+  /*display: block;*/
+  padding: 0px;
+  margin:  0px;
+  border: 0px;
+  border-style: none;
+  max-height: 1.0rem;
+  flex-grow: 1; 
+}
+
 .separator{
   display: block;
   /*border: 0px;*/
@@ -125,35 +135,38 @@ ul > li::marker{
 
 #bio{
   flex-grow: 1;
+  justify-content: flex-end;
+}
+
+#bio .spacer{
+  max-height: 0.2rem;
 }
 
 #bio > div{
   /*padding: 0px;*/
 }
 
-#bio .one{
+#bio .nametag{
   /*top: 0px;*/
   /*bottom: auto;*/
   /*flex-grow: 1;*/
 }
 
-#bio .two{
+#bio .education{
   /*flex-grow: 1;*/
 }
 
-#bio .three{
+#bio .links-section{
   /*top: auto;*/
   /*bottom: 0px;*/
   /*flex-grow: 1;*/
 }
 
-#bio .two ul{
-  margin-top:    1em;
-  margin-bottom: 1em;
+#bio .links-section ul{
   padding-left: 2ch;
 }
 
-#bio .two ul > li {
+#bio .links-section ul > li {
   padding-top:    0.15em;
   padding-bottom: 0.15em;
 }
