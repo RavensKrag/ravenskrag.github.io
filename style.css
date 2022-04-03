@@ -132,6 +132,7 @@ ul > li::marker{
 
 #header h1{
   margin: 0px;
+  /*font-size: 1.7em;*/
 }
 
 
@@ -153,6 +154,16 @@ ul > li::marker{
   /*bottom: auto;*/
   /*flex-grow: 1;*/
 }
+
+.nametag .job-title{
+  /*font-style: italic;*/
+  font-weight: bold;
+}
+.nametag .organization{
+  /*font-style: italic;*/
+  font-weight: bold;
+}
+
 
 #bio .education{
   /*flex-grow: 1;*/
@@ -193,7 +204,7 @@ ul.horizontal.links > li {
 }
 
 #sidebar h2{
-  font-size: 1.4em;
+  font-size: 1.3em;
   font-style: bold;
   /*text-decoration: underline;*/
 }
@@ -212,9 +223,18 @@ ul.horizontal.links > li {
   padding-top: 0.5em;
 }
 
-#sidebar ul.affiliation.previous{
+#sidebar .affiliation.previous ul{
   list-style: none;
   padding: 0px;
+}
+
+#sidebar .affiliation.previous li {
+  padding-top:    0.6em;
+  padding-bottom: 0.6em;
+}
+
+#sidebar .affiliation.previous li:first-child {
+  padding-top:    0.0em;
 }
 
 
@@ -250,7 +270,7 @@ ul.horizontal.links > li {
     }
     
     #sidebar{
-      /*align-self: center;*/
+      align-self: center;
       order: 2;
     }
     
