@@ -105,7 +105,9 @@ ul > li::marker{
 /*select all divs in the grid*/
 #main > div.flex.row > div{
   /*margin: .6em;*/
+  
   margin: 0.0em 0.6em;
+  /* ^ should match padding in #content .content */
 }
 
 #header img.headshot{
@@ -217,8 +219,11 @@ ul.horizontal.links > li {
 
 
 
-#content{
-  max-width: 52ch;
+
+
+.highlight{
+  background-color: #E6CAF7;
+  /*border-radius: 0.28rem;*/
 }
 
 #content h2{
@@ -235,38 +240,74 @@ ul.horizontal.links > li {
   font-style: bold;
 }
 
-.highlight{
-  background-color: #E6CAF7;
-  /*border-radius: 0.28rem;*/
-}
-
-#content .news{
-  padding: 0.8em;
-  /* ^ needs to be adjusted 
-       relative to #sidebar h2
-       font size
-  */
-}
-
-
-@media only screen and (max-width: 600px){
-  
-  .flex.row.bottom{
-    /*display: block;*/
-    flex-direction: column;
-    /*flex: 1;*/
+@media only screen{
+  /* narrow format */
+  @media (max-width: 600px){
+    .flex.row.bottom{
+      /*display: block;*/
+      flex-direction: column;
+      /*flex: 1;*/
+    }
+    
+    #sidebar{
+      /*align-self: center;*/
+      order: 2;
+    }
+    
+    
+    #content{
+      width: 100%;
+      /*top: 0px;*/
+      order: 1;
+    }
+    
+    #content .background{
+      width: 100%;
+    }
+    
+    #content .content{
+      max-width: 52ch;
+      /*align-self: center;*/
+      margin-left:  auto;
+      margin-right: auto;
+      
+      padding: 0px 0.6em;
+      /* ^ horizontal padding should match #main > div.flex.row > div */
+    }
+    
+    #content .news{
+      padding-top:    0.5em;
+      padding-bottom: 0.5em;
+      
+      /*margin: 0.8em;*/
+    }
   }
   
-  #content{
-    align-self: center;
-    /*top: 0px;*/
-    order: 1;
-  }
-  
-  
-  #sidebar{
-    /*align-self: center;*/
-    order: 2;
+  /* full size */
+  @media (min-width: 600px){
+    #content{
+      
+    }
+
+    #content .background{
+      /*width: 100%;*/
+    }
+
+    #content .content{
+      max-width: 52ch;
+      /*align-self: center;*/
+      margin-left:  0px;
+      margin-right: 0px;
+    }
+    
+    #content .news{
+      padding: 0.8em;
+      /* ^ needs to be adjusted 
+           relative to #sidebar h2
+           font size
+      */
+      /*margin: 0.8em;*/
+    }
   }
   
 }
