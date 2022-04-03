@@ -107,7 +107,7 @@ ul > li::marker{
   /*margin: .6em;*/
   
   margin: 0.0em 0.6em;
-  /* ^ must match padding in #content .content AND #content .news*/
+  /* ^ should match padding in #content .content */
 }
 
 #header img.headshot{
@@ -272,12 +272,12 @@ ul.horizontal.links > li {
       margin-right: auto;
       
       padding: 0px 0.6em;
-      /* ^ horizontal padding must match #main > div.flex.row > div */
+      /* ^ horizontal padding should match #main > div.flex.row > div */
     }
     
     #content .news{
-      padding: 0.5em 0.6em;
-      /* ^ horizontal padding must match #main > div.flex.row > div */
+      padding-top:    0.5em;
+      padding-bottom: 0.5em;
       
       /*margin: 0.8em;*/
     }
