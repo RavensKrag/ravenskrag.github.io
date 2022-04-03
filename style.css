@@ -240,10 +240,19 @@ ul.horizontal.links > li {
   /*border-radius: 0.28rem;*/
 }
 
-.news{
+#content .news{
   padding: 0.8em;
   /* ^ needs to be adjusted 
        relative to #sidebar h2
        font size
   */
+}
+
+
+@media (max-width: 600px){
+  
+  #sidebar{
+    display: none;
+  }
+  
 }
