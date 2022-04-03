@@ -156,6 +156,10 @@ ul > li::marker{
   /*flex-grow: 1;*/
 }
 
+#bio .education ul{
+  padding-left: 2ch;
+}
+
 #bio .links-section{
   /*top: auto;*/
   /*bottom: 0px;*/
@@ -163,7 +167,7 @@ ul > li::marker{
 }
 
 #bio .links-section ul{
-  padding-left: 2ch;
+  /*padding-left: 2ch;*/
 }
 
 #bio .links-section ul > li {
@@ -249,10 +253,24 @@ ul.horizontal.links > li {
 }
 
 
-@media (max-width: 600px){
+@media only screen and (max-width: 600px){
+  
+  .flex.row.bottom{
+    /*display: block;*/
+    flex-direction: column;
+    /*flex: 1;*/
+  }
+  
+  #content{
+    align-self: center;
+    /*top: 0px;*/
+    order: 1;
+  }
+  
   
   #sidebar{
-    display: none;
+    /*align-self: center;*/
+    order: 2;
   }
   
 }
