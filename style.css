@@ -160,19 +160,15 @@ ul > li::marker{
   padding-left: 2ch;
 }
 
+#bio .education ul > li {
+  padding-top:    0.15em;
+  padding-bottom: 0.15em;
+}
+
 #bio .links-section{
   /*top: auto;*/
   /*bottom: 0px;*/
   /*flex-grow: 1;*/
-}
-
-#bio .links-section ul{
-  /*padding-left: 2ch;*/
-}
-
-#bio .links-section ul > li {
-  padding-top:    0.15em;
-  padding-bottom: 0.15em;
 }
 
 ul.horizontal.links {
