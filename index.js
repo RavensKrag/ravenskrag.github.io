@@ -56,7 +56,7 @@ bindButtonListener("editorjs", function(clickedArea, e){
   // move the toolbar
   toolbar_node.setAttribute(
     "style", 
-    `left: ${e.target.offsetLeft + e.target.offsetWidth/2 - toolbar_width/2}px; top: calc(${e.target.offsetTop}px - ${1.5*rem}px)`
+    `left: ${e.target.offsetLeft + e.target.offsetWidth/2 - toolbar_width/2}px; top: calc(${e.target.offsetTop}px - ${1.8*rem}px)`
   );
   
   
@@ -64,25 +64,18 @@ bindButtonListener("editorjs", function(clickedArea, e){
 });
 
 
-bindFormattingListener("bold", function(name, e){
-  console.log(name);
-});
 
-bindFormattingListener("italic", function(name, e){
-  console.log(name);
-});
+// TODO: currently applying styles with css only. may want to look into ways to make this more accessible / add more semantic tags.
 
-bindFormattingListener("underline", function(name, e){
-  console.log(name);
-});
 
-bindFormattingListener("link", function(name, e){
-  console.log(name);
-});
 
-bindFormattingListener("highlighter", function(name, e){
+// TODO: if the current formatting overlaps an existing region with the same formatting, need to merge the tags
+  // (oh wait - it is possible that the core code can already do this, but I've forced the selection to only operate within the same tag, as to not break the formatting of the page. as such, I don't think there's any way to implement this right now... need to fix that)
+
+// TODO: may also be situations where you need to split a tag - think of adding bold to the center of a region that is already italicized.
+
+function applyFormatting(name){
   console.log(name);
-  
   
   // process the text
   // (click event returns text node)
@@ -97,13 +90,45 @@ bindFormattingListener("highlighter", function(name, e){
     let sel = selection.getRangeAt(0);
       let selectedContent = sel.extractContents();
       var span = document.createElement("span");
-      span.style.backgroundColor = "lightpink";
+      span.classList.add(name) 
       span.appendChild(selectedContent);
     sel.insertNode(span);
     
     
     // selection.anchorOffset
   }
+  
+  clearSelection();
+}
+
+bindFormattingListener("bold", function(name, e){
+  applyFormatting(name);
+});
+
+bindFormattingListener("italic", function(name, e){
+  applyFormatting(name);
+});
+
+bindFormattingListener("underline", function(name, e){
+  applyFormatting(name);
+});
+
+// TODO: implement adding links to existing text
+// TODO: implement removing links
+// TODO: implement editing existing links
+bindFormattingListener("link", function(name, e){
+  console.log(name);
+});
+
+bindFormattingListener("highlighter", function(name, e){
+  applyFormatting(name);
+});
+
+bindFormattingListener("remove-format", function(name, e){
+  console.log(name);
+  
+  // Find any span tags within the selected region that include the classes bold, italic, underline, or highligher, and remove them. Don't just remove the classes - actually remove the entire tags.
+  
   
   clearSelection();
 });
