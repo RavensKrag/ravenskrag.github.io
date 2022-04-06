@@ -25,7 +25,7 @@ bindButtonListener("editorjs", function(clickedArea, e){
   
   // make toolbar visible
   toolbar_node = document.getElementById("editor-toolbar");
-  toolbar_node.class = 'block';
+  toolbar_node.classList = ['visible'];
     
   // do things with the toolbar
   toolbar_width = 
