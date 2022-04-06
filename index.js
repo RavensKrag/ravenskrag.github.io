@@ -1,6 +1,6 @@
 function bindButtonListener(id, fn){
-  button = document.getElementById(id);
-  button.addEventListener("click", (e) => { fn(id, e);}, false);
+  clickedArea = document.getElementById(id);
+  clickedArea.addEventListener("click", (e) => { fn(clickedArea, e);}, false);
 }
 
 
@@ -9,8 +9,19 @@ function bindButtonListener(id, fn){
 console.log("init page");
 
 
-bindButtonListener("editorjs", function(id, e){
-  console.log("area clicked:", id, e);
+bindButtonListener("editorjs", function(clickedArea, e){
+  console.log("area clicked:", clickedArea, e);
+  
+  // 
+  // enable editing
+  // 
+  
+  clickedArea.setAttribute("contenteditable", true);
+  
+  
+  // 
+  // manage toolbar
+  // 
   
   editor_id = "editor-toolbar";
   
@@ -27,7 +38,10 @@ bindButtonListener("editorjs", function(id, e){
     node.appendChild(child);
   }else{
     // do things with the toolbar
+    
   }
+  
+  
     
   
 });
