@@ -19,7 +19,12 @@ function clearSelection(){
 function getCurrentBlock(node){
   // if input is a selection, then convert from a text node to a "real" HTML tag by getting the node where the selection started
   if(node instanceof Selection){
-    node = node.anchorNode;
+    node = node.anchorNode.parentElement;
+  }
+  
+  // within the selection, there's a Text object, which holds the content of the "real" HTML tag. But I need to get the proper tag.
+  if(node instanceof Text){
+    node = node.parentElement;
   }
   
   // now the node must be a "real" HTML tag
@@ -106,7 +111,11 @@ function applyFormatting(name){
   console.log(selection);
   
   // for now, can't deal with selections that cross boundaries of different tags (like from h2 into p)
-  if(selection.anchorNode == selection.focusNode){
+  
+  var startNode = getCurrentBlock(selection.anchorNode);
+  var endNode = getCurrentBlock(selection.focusNode);
+  
+  if(startNode == endNode){
     // https://stackoverflow.com/questions/6328718/how-to-wrap-surround-highlighted-text-with-an-element
     
     let sel = selection.getRangeAt(0);
@@ -150,6 +159,28 @@ bindFormattingListener("remove-format", function(name, e){
   console.log(name);
   
   // Find any span tags within the selected region that include the classes bold, italic, underline, or highligher, and remove them. Don't just remove the classes - actually remove the entire tags.
+  
+  
+  // process the text
+  // (click event returns text node)
+  
+  selection = window.getSelection()
+  console.log(activeArea);
+  console.log(selection);
+  
+  // for now, can't deal with selections that cross boundaries of different tags (like from h2 into p)
+  
+  var startNode = getCurrentBlock(selection.anchorNode);
+  var endNode = getCurrentBlock(selection.focusNode);
+  
+  if(startNode == endNode){
+    console.log('node: ', startNode);
+    
+    
+    
+    
+  }
+  
   
   
   clearSelection();
