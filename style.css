@@ -32,6 +32,27 @@ ul > li::marker{
 }
 
 
+
+.bold{
+  font-weight: bold;
+}
+
+.italic{
+  font-style: italic;
+}
+
+.underline{
+  text-decoration: underline;
+  text-decoration-style: solid;
+}
+
+.highlighter{
+  background: #FFB6C1;
+}
+
+
+
+
 .spacer{
   /*display: block;*/
   padding: 0px;
@@ -86,6 +107,32 @@ ul > li::marker{
 }
 
 
+
+
+#editor-toolbar{
+  position: absolute;
+  height: 2em;
+  width: 15ch;
+  
+  /*background: #2D2A2E;*/
+  background: #ffffff;
+  
+  border-radius: 0.28rem;
+  padding: 0px 0.5ch;
+}
+
+#editor-toolbar.visible{
+  /*display: block;*/
+  
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#editor-toolbar.invisible{
+  display: none;
+}
 
 
 

@@ -1,7 +1,18 @@
 #!/usr/bin/env ruby
 
 require 'nokogiri'
+require 'yaml'
 
+data = [
+      "live.js",
+      "editor.js",
+      "https://cdn.jsdelivr.net/npm/@editorjs/header@2.3.2",
+      "https://cdn.jsdelivr.net/npm/@editorjs/paragraph@2.3.2",
+    ]
+
+File.open("./js_paths.yaml", "w") do |f|
+	f.print YAML.dump(data)
+end
 
 
 f = File.read('index.html')
@@ -16,3 +27,5 @@ require 'irb'
 binding.irb
 
 doc.to_s
+
+
