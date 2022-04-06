@@ -1,6 +1,9 @@
 #!/usr/bin/env ruby
 require 'sinatra'
 
+puts "Sinatra starting soon"
+puts "webpage will be available at: http://localhost:4567/"
+
 get '/' do
 	send_file 'index.html'
 end
