@@ -38,8 +38,16 @@ bindButtonListener("editorjs", function(clickedArea, e){
     node.appendChild(child);
   }else{
     // do things with the toolbar
-    
+    toolbar_node.setAttribute(
+      "style", 
+      `left: ${e.clientX}px; top: ${e.clientY}px`
+    );
   }
+  
+  
+  
+  x = window.getSelection()
+  console.log(x);
   
   
     
