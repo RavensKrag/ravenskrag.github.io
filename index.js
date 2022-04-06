@@ -3,6 +3,11 @@ function bindButtonListener(id, fn){
   clickedArea.addEventListener("click", (e) => { fn(clickedArea, e);}, false);
 }
 
+function bindFormattingListener(name, fn){
+  node = document.querySelector(`#editor-toolbar > .fa-${name}`);
+  node.addEventListener("click", (e) => { fn(name, e);}, false);
+}
+
 
 
 
@@ -70,6 +75,21 @@ bindButtonListener("editorjs", function(clickedArea, e){
     // selection.anchorOffset
   }
   
-    
-  
+});
+
+
+bindFormattingListener("bold", function(name, e){
+  console.log(name);
+});
+
+bindFormattingListener("italic", function(name, e){
+  console.log(name);
+});
+
+bindFormattingListener("underline", function(name, e){
+  console.log(name);
+});
+
+bindFormattingListener("link", function(name, e){
+  console.log(name);
 });
