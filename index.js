@@ -15,6 +15,21 @@ function clearSelection(){
   document.getSelection().collapseToEnd()
 }
 
+// get current block element. ignore inline elements like <span> or <a> used for formatting of text and get the surrounding semantic block instead. (not the structural block, which would be the <div> that holds the content)
+function getCurrentBlock(node){
+  // if input is a selection, then convert from a text node to a "real" HTML tag by getting the node where the selection started
+  if(node instanceof Selection){
+    node = node.anchorNode;
+  }
+  
+  // now the node must be a "real" HTML tag
+  if(node.tagName == "SPAN" || node.tagName == "A"){
+    return node.parentNode;
+  }else{
+    return node;
+  }
+}
+
 
 
 
@@ -29,7 +44,7 @@ bindButtonListener("editorjs", function(clickedArea, e){
   // 
   
   clickedArea.setAttribute("contenteditable", true);
-  
+  activeArea = clickedArea; // global variable
   
   // 
   // manage toolbar
@@ -53,10 +68,12 @@ bindButtonListener("editorjs", function(clickedArea, e){
         .getPropertyValue('font-size')
         .match(/\d+/);
   
+  currentBlock = getCurrentBlock(e.target);
+  
   // move the toolbar
   toolbar_node.setAttribute(
     "style", 
-    `left: ${e.target.offsetLeft + e.target.offsetWidth/2 - toolbar_width/2}px; top: calc(${e.target.offsetTop}px - ${1.8*rem}px)`
+    `left: ${currentBlock.offsetLeft + currentBlock.offsetWidth/2 - toolbar_width/2}px; top: calc(${currentBlock.offsetTop}px - ${1.8*rem}px)`
   );
   
   
@@ -74,14 +91,19 @@ bindButtonListener("editorjs", function(clickedArea, e){
 
 // TODO: may also be situations where you need to split a tag - think of adding bold to the center of a region that is already italicized.
 
+// TODO: prevent creation of zero-width spans (spans with no characters inside them)
+
 function applyFormatting(name){
+  activeArea; // global variable
+  
   console.log(name);
   
   // process the text
   // (click event returns text node)
   
   selection = window.getSelection()
-  // console.log(selection);
+  console.log(activeArea);
+  console.log(selection);
   
   // for now, can't deal with selections that cross boundaries of different tags (like from h2 into p)
   if(selection.anchorNode == selection.focusNode){
