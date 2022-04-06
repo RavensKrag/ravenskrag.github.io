@@ -96,7 +96,7 @@ ul > li::marker{
   background: #ffffff;
   
   border-radius: 0.28rem;
-  padding: 0px 1.5ch;
+  padding: 0px 0.5ch;
 }
 
 #editor-toolbar.visible{
