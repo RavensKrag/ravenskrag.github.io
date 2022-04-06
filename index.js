@@ -93,3 +93,7 @@ bindFormattingListener("underline", function(name, e){
 bindFormattingListener("link", function(name, e){
   console.log(name);
 });
+
+bindFormattingListener("highlighter", function(name, e){
+  console.log(name);
+});
