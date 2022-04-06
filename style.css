@@ -98,6 +98,14 @@ ul > li::marker{
   border-radius: 0.28rem;
 }
 
+#editor-toolbar .visible{
+  display: block;
+}
+
+#editor-toolbar .invisible{
+  display: none;
+}
+
 
 
 

@@ -23,23 +23,11 @@ bindButtonListener("editorjs", function(clickedArea, e){
   // manage toolbar
   // 
   
-  editor_id = "editor-toolbar";
-  
-  toolbar_node = document.getElementById(editor_id);
-  // => return 'null' if element with ID not found
-  // console.log(toolbar_node);
-  
-  if(toolbar_node == null){
-    // create a new toolbar
-    node = document.getElementsByTagName("body")[0];
-      toolbar_node = document.createElement("div");
-      text_node = document.createTextNode("hello world!");
-      toolbar_node.appendChild(text_node);
-      toolbar_node.id = editor_id;
-    node.appendChild(toolbar_node);
-  }
+  // make toolbar visible
+  toolbar_node = document.getElementById("editor-toolbar");
+  toolbar_node.class = 'block';
+    
   // do things with the toolbar
-  
   toolbar_width = 
         window
         .getComputedStyle(toolbar_node)
