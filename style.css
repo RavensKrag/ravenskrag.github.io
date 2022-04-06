@@ -90,7 +90,7 @@ ul > li::marker{
 
 #editor-toolbar{
   position: absolute;
-  width: 300px;
+  width: 15ch;
   
   /*background: #2D2A2E;*/
   background: #ffffff;
