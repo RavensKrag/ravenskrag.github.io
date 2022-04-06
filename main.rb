@@ -61,6 +61,11 @@ get '/editorjs/*' do |name|
   send_file "editorjs/#{name}"
 end
 
+get '/fontawesome-free/*' do |name|
+  send_file "fontawesome-free/#{name}"
+end
+
+
 
 # 
 # JSON REST API endpoint
