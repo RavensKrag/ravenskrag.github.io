@@ -32,36 +32,33 @@ bindButtonListener("editorjs", function(clickedArea, e){
   if(toolbar_node == null){
     // create a new toolbar
     node = document.getElementsByTagName("body")[0];
-      child = document.createElement("div");
-      child.appendChild(document.createTextNode("hello world!"));
-      child.id = editor_id;
-    node.appendChild(child);
-  }else{
-    // do things with the toolbar
-    
-    
-    
-    toolbar_width = 
-          window
-          .getComputedStyle(toolbar_node)
-          .getPropertyValue('width')
-          .match(/\d+/);
-    
-    body = document.getElementsByTagName("body")[0];
-    
-    rem = window
-          .getComputedStyle(body)
-          .getPropertyValue('font-size')
-          .match(/\d+/);
-    
-    // move the toolbar
-    toolbar_node.setAttribute(
-      "style", 
-      `left: ${e.target.offsetLeft + e.target.offsetWidth/2 - toolbar_width/2}px; top: calc(${e.target.offsetTop}px - ${1.5*rem}px)`
-    );
-    
-    
+      toolbar_node = document.createElement("div");
+      text_node = document.createTextNode("hello world!");
+      toolbar_node.appendChild(text_node);
+      toolbar_node.id = editor_id;
+    node.appendChild(toolbar_node);
   }
+  // do things with the toolbar
+  
+  toolbar_width = 
+        window
+        .getComputedStyle(toolbar_node)
+        .getPropertyValue('width')
+        .match(/\d+/);
+  
+  body = document.getElementsByTagName("body")[0];
+  
+  rem = window
+        .getComputedStyle(body)
+        .getPropertyValue('font-size')
+        .match(/\d+/);
+  
+  // move the toolbar
+  toolbar_node.setAttribute(
+    "style", 
+    `left: ${e.target.offsetLeft + e.target.offsetWidth/2 - toolbar_width/2}px; top: calc(${e.target.offsetTop}px - ${1.5*rem}px)`
+  );
+  
   
   
   // process the text
