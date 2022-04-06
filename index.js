@@ -9,6 +9,13 @@ function bindFormattingListener(name, fn){
 }
 
 
+// clear selection
+function clearSelection(){
+  // https://stackoverflow.com/questions/6562727/is-there-a-function-to-deselect-all-text-using-javascript
+  document.getSelection().collapseToEnd()
+}
+
+
 
 
 console.log("init page");
@@ -54,27 +61,6 @@ bindButtonListener("editorjs", function(clickedArea, e){
   
   
   
-  // process the text
-  // (click event returns text node)
-  
-  selection = window.getSelection()
-  // console.log(selection);
-  
-  // for now, can't deal with selections that cross boundaries of different tags (like from h2 into p)
-  if(selection.anchorNode == selection.focusNode){
-    // https://stackoverflow.com/questions/6328718/how-to-wrap-surround-highlighted-text-with-an-element
-    
-    let sel = selection.getRangeAt(0);
-      let selectedContent = sel.extractContents();
-      var span = document.createElement("span");
-      span.style.backgroundColor = "lightpink";
-      span.appendChild(selectedContent);
-    sel.insertNode(span);
-    
-    
-    // selection.anchorOffset
-  }
-  
 });
 
 
@@ -96,4 +82,28 @@ bindFormattingListener("link", function(name, e){
 
 bindFormattingListener("highlighter", function(name, e){
   console.log(name);
+  
+  
+  // process the text
+  // (click event returns text node)
+  
+  selection = window.getSelection()
+  // console.log(selection);
+  
+  // for now, can't deal with selections that cross boundaries of different tags (like from h2 into p)
+  if(selection.anchorNode == selection.focusNode){
+    // https://stackoverflow.com/questions/6328718/how-to-wrap-surround-highlighted-text-with-an-element
+    
+    let sel = selection.getRangeAt(0);
+      let selectedContent = sel.extractContents();
+      var span = document.createElement("span");
+      span.style.backgroundColor = "lightpink";
+      span.appendChild(selectedContent);
+    sel.insertNode(span);
+    
+    
+    // selection.anchorOffset
+  }
+  
+  clearSelection();
 });
