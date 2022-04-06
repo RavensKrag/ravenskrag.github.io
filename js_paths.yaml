@@ -1,0 +1,7 @@
+---
+- live.js
+- editor.js
+- https://cdn.jsdelivr.net/npm/@editorjs/header@2.3.2
+- editorjs/paragraph.js
+- https://cdn.jsdelivr.net/npm/@editorjs/link@2.3.2
+# - https://cdn.jsdelivr.net/npm/@editorjs/underline@2.3.2
