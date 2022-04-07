@@ -195,21 +195,35 @@ bindFormattingListener("remove-format", function(name, e){
     console.log('node: ', node);
     
     
-    let sel = selection.getRangeAt(0);
-      let selectedContent = sel.extractContents();
-      var span = document.createElement("span");
-      span.textContent = selectedContent.textContent;
-    sel.insertNode(span);
+    let range = selection.getRangeAt(0);
     
-    // // edit node text to match this contatamer
-    // node.innerText = text;
     
-    // ^ current implementation of this function actually strips all formatting - it's not just limited to the range of the selection. Now I need to figure out:
-      // How do you limit the traversal of childen to those that overlap with the selection?
-      // How do you strip the tags on the selected area, while leaving the rest of the text untouched?
+    // 
+    // clear formatting
+    // 
+    
+    // https://stackoverflow.com/questions/15001625/clear-format-in-range
+    
+    let selectedContent = range.extractContents();
+    let text_node = document.createTextNode(selectedContent.textContent);
+    range.deleteContents();
+    range.insertNode(text_node);
+    range.selectNodeContents(text_node);
+    
+    
+    
+    // 
+    // merge any fragments of Text nodes you may have created 
+    // 
+    
+    // let range = document.createRange();
+    // range.setStart(, start_i);
+    // range.setEnd(, end_i);
+    // selection.addRange(range);
+    
   }
   
   
   
-  clearSelection();
+  // clearSelection();
 });
