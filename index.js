@@ -37,7 +37,6 @@ function getCurrentBlock(node){
 
 
 
-
 console.log("init page");
 
 
@@ -118,18 +117,21 @@ function applyFormatting(name){
   if(startNode == endNode){
     // https://stackoverflow.com/questions/6328718/how-to-wrap-surround-highlighted-text-with-an-element
     
-    let sel = selection.getRangeAt(0);
-      let selectedContent = sel.extractContents();
-      var span = document.createElement("span");
-      span.classList.add(name) 
-      span.appendChild(selectedContent);
-    sel.insertNode(span);
+    for(let i=0; i<selection.rangeCount; i++){
+      let sel = selection.getRangeAt(i);
+        let selectedContent = sel.extractContents();
+        var span = document.createElement("span");
+        span.classList.add(name) 
+        span.appendChild(selectedContent);
+      sel.insertNode(span);
+    }
+    
     
     
     // selection.anchorOffset
   }
   
-  clearSelection();
+  // clearSelection();
 }
 
 bindFormattingListener("bold", function(name, e){
@@ -155,6 +157,20 @@ bindFormattingListener("highlighter", function(name, e){
   applyFormatting(name);
 });
 
+
+
+
+
+function stripFormatting(node){
+  if(node instanceof Text){
+    // base case
+    return node.textContent;
+  }else{
+    // recursive case?
+    return node.innerText;
+  }
+}
+
 bindFormattingListener("remove-format", function(name, e){
   console.log(name);
   
@@ -174,11 +190,23 @@ bindFormattingListener("remove-format", function(name, e){
   var endNode = getCurrentBlock(selection.focusNode);
   
   if(startNode == endNode){
-    console.log('node: ', startNode);
+    var node = startNode;
+    
+    console.log('node: ', node);
     
     
+    let sel = selection.getRangeAt(0);
+      let selectedContent = sel.extractContents();
+      var span = document.createElement("span");
+      span.textContent = selectedContent.textContent;
+    sel.insertNode(span);
     
+    // // edit node text to match this contatamer
+    // node.innerText = text;
     
+    // ^ current implementation of this function actually strips all formatting - it's not just limited to the range of the selection. Now I need to figure out:
+      // How do you limit the traversal of childen to those that overlap with the selection?
+      // How do you strip the tags on the selected area, while leaving the rest of the text untouched?
   }
   
   
