@@ -231,12 +231,6 @@ bindButtonListener("editorjs", function(clickedArea, e){
 // TODO: currently applying styles with css only. may want to look into ways to make this more accessible / add more semantic tags.
 
 
-
-// TODO: if the current formatting overlaps an existing region with the same formatting, need to merge the tags
-  // (oh wait - it is possible that the core code can already do this, but I've forced the selection to only operate within the same tag, as to not break the formatting of the page. as such, I don't think there's any way to implement this right now... need to fix that)
-
-// TODO: may also be situations where you need to split a tag - think of adding bold to the center of a region that is already italicized.
-
 // TODO: prevent creation of zero-width spans (spans with no characters inside them)
 
 function applyFormatting(name){
@@ -294,6 +288,8 @@ function applyFormatting(name){
             doc_fragment.replaceChild(span, node);
             
             range.insertNode(doc_fragment);
+            
+            // TODO: ^ is there a simpler way to do this without using a document fragment? I just used that technique because it's what I already had in the section below, but there may be cleaner way to implement this
           }
         }
         
@@ -442,8 +438,6 @@ bindFormattingListener("remove-format", function(name, e){
     
     mergeTagFragments(node);
     removeEmptyChildren(node);
-    
-    // TODO: make sure same formatting is not applied twice (aka if we're already in a "bold" section, don't apply bold style again. actually, if the user does that action, should probably remove the bold style instead.)
     
     
     // 
