@@ -117,14 +117,36 @@ function applyFormatting(name){
   if(startNode == endNode){
     // https://stackoverflow.com/questions/6328718/how-to-wrap-surround-highlighted-text-with-an-element
     
+    
+    // add formmating
     for(let i=0; i<selection.rangeCount; i++){
       let sel = selection.getRangeAt(i);
-        let selectedContent = sel.extractContents();
-        var span = document.createElement("span");
-        span.classList.add(name) 
-        span.appendChild(selectedContent);
-      sel.insertNode(span);
+      let doc_fragment = sel.extractContents();
+      
+      console.log(doc_fragment);
+      
+      for(node of doc_fragment.childNodes){
+        if(node instanceof Text){
+          // wrap text in <span>
+          let span = document.createElement("span");
+          span.classList.add(name)
+          span.textContent = node.textContent;
+          
+          doc_fragment.replaceChild(span, node);
+        }else if(node.tagName == 'SPAN'){
+          // if <span> exists, just add a new formatting class
+          let span = node;
+          span.classList.add(name);
+        }
+      }
+      
+      sel.insertNode(doc_fragment);
     }
+    
+    
+    // clean up - merge tag fragments
+    
+    
     
     
     
@@ -204,16 +226,22 @@ bindFormattingListener("remove-format", function(name, e){
     
     // https://stackoverflow.com/questions/15001625/clear-format-in-range
     
-    let selectedContent = range.extractContents();
-    let text_node = document.createTextNode(selectedContent.textContent);
-    range.deleteContents();
-    range.insertNode(text_node);
-    range.selectNodeContents(text_node);
+    let doc_fragment = range.extractContents();
     
+    console.log(doc_fragment);
+    
+    // let text = document.createTextNode(doc_fragment.textContent);
+    // range.deleteContents();
+    // range.insertNode(text);
+    // range.selectNodeContents(text);
+    
+    
+    // TODO: make sure same formatting is not applied twice (aka if we're already in a "bold" section, don't apply bold style again. actually, if the user does that action, should probably remove the bold style instead.)
     
     
     // 
-    // merge any fragments of Text nodes you may have created 
+    // merge any fragments of Text nodes you may have created
+    // (may need to re-compute the selection)
     // 
     
     // let range = document.createRange();
@@ -221,6 +249,18 @@ bindFormattingListener("remove-format", function(name, e){
     // range.setEnd(, end_i);
     // selection.addRange(range);
     
+    
+    // 
+    // remove <span> tags that are empty (contain 0 characters)
+    // 
+    
+    // node.childNodes.forEach(function(child, i){
+    //   if(child.nodeName == "SPAN"){
+    //     if(child.innerHTML == ""){
+    //       child.remove();
+    //     }
+    //   }
+    // });
   }
   
   
