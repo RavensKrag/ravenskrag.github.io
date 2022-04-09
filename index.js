@@ -72,7 +72,7 @@ function nodesSimilar(n1, n2){
     if(t1 == "#Text"){
       return true;
     }else{
-      return eachEqual(n1, n2);
+      return eachEqual(n1.classList, n2.classList);
     }
   }
   else{
@@ -114,7 +114,7 @@ function mergeTagFragments(node){
     console.log('merge fragments', i,j);
     for(let k=i+1; k<j; k++){
       if(type == "#Text"){
-        
+        children[i].textContent += children[k].textContent;
       }else if(type == "SPAN"){
         console.log(children[k]);
         children[i].textContent += children[k].textContent;
@@ -312,7 +312,7 @@ bindFormattingListener("remove-format", function(name, e){
   var endNode = getCurrentBlock(selection.focusNode);
   
   if(startNode == endNode){
-    var node = startNode;
+    let node = startNode;
     
     console.log('node: ', node);
     
@@ -330,24 +330,18 @@ bindFormattingListener("remove-format", function(name, e){
     
     console.log(doc_fragment);
     
-    // let text = document.createTextNode(doc_fragment.textContent);
-    // range.deleteContents();
-    // range.insertNode(text);
+    let text = document.createTextNode(doc_fragment.textContent);
+    range.deleteContents();
+    range.insertNode(text);
     // range.selectNodeContents(text);
+    
+    mergeTagFragments(node);
+    
+    
+    // FIXME: Can't un-format the middle of a section of text
     
     
     // TODO: make sure same formatting is not applied twice (aka if we're already in a "bold" section, don't apply bold style again. actually, if the user does that action, should probably remove the bold style instead.)
-    
-    
-    // 
-    // merge any fragments of Text nodes you may have created
-    // (may need to re-compute the selection)
-    // 
-    
-    // let range = document.createRange();
-    // range.setStart(, start_i);
-    // range.setEnd(, end_i);
-    // selection.addRange(range);
     
     
     // 
