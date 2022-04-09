@@ -133,6 +133,50 @@ function mergeTagFragments(node){
   }
 }
 
+function removeEmptyChildren(node){
+  let children = node.childNodes
+  for(let i=children.length-1; i>=0; i--){
+    // delete child if it is empty
+    
+    let child = children[i];
+    // let type = nodeType(child);
+    // if(type == "#Text"){
+      
+    // }else if(type == "SPAN"){
+      
+    // }
+    if(child.innerText == ""){
+      child.remove();
+    }
+  }
+}
+
+function splitNode(parent, range){
+  // console.log("contained within span");
+  let grandparent = parent.parentNode;
+  
+  let str = parent.innerText;
+  console.log(str);
+  
+  var p1 = parent.cloneNode(); // don't copy inner text
+  let p2 = parent.cloneNode(); // don't copy inner text
+  let p3 = parent;
+  
+  grandparent.insertBefore(p2, p3);
+  grandparent.insertBefore(p1, p2);
+  
+  // inclusive on bottom end, exclusive on top end
+    // startOffset
+    // endOffset
+  
+  p1.textContent = str.substring(0, range.startOffset);
+  p2.textContent = str.substring(range.startOffset, range.endOffset);
+  p3.textContent = str.substring(range.endOffset);
+  
+  // p1.textContent = p3.textContent;
+  return {grandparent, p1, p2, p3};
+}
+
 
 
 console.log("init page");
@@ -220,27 +264,67 @@ function applyFormatting(name){
     
     // add formmating
     for(let i=0; i<selection.rangeCount; i++){
-      let sel = selection.getRangeAt(i);
-      let doc_fragment = sel.extractContents();
+      let range = selection.getRangeAt(i);
       
-      console.log(doc_fragment);
-      
-      for(node of doc_fragment.childNodes){
-        if(node instanceof Text){
-          // wrap text in <span>
-          let span = document.createElement("span");
-          span.classList.add(name)
-          span.textContent = node.textContent;
-          
-          doc_fragment.replaceChild(span, node);
-        }else if(node.tagName == 'SPAN'){
-          // if <span> exists, just add a new formatting class
-          let span = node;
-          span.classList.add(name);
+      if(range.startContainer == range.endContainer){
+        // selection is completely contained with some existing element
+        let container = range.startContainer;
+        let parent = container.parentNode;
+        
+        if(nodeType(container) == "#Text"){
+          if(nodeType(parent) == "SPAN"){
+            // there's already a styled span - need to split this
+            split = splitNode(parent, range);
+            
+            // add formatting class to p2
+            split.p2.classList.add(name);
+          }else{
+            // you're in completely unformatted territory
+            let doc_fragment = range.extractContents();
+            
+            console.log(doc_fragment);
+            
+            let node = doc_fragment.childNodes[0];
+            
+            // wrap text in <span>
+            let span = document.createElement("span");
+            span.classList.add(name)
+            span.textContent = node.textContent;
+            
+            doc_fragment.replaceChild(span, node);
+            
+            range.insertNode(doc_fragment);
+          }
         }
+        
+      }else{
+        // boundary between multiple elements
+        
+        let doc_fragment = range.extractContents();
+        
+        console.log(doc_fragment);
+        
+        for(node of doc_fragment.childNodes){
+          if(node instanceof Text){
+            // this is raw text
+            
+            // wrap text in <span>
+            let span = document.createElement("span");
+            span.classList.add(name)
+            span.textContent = node.textContent;
+            
+            doc_fragment.replaceChild(span, node);
+            
+          }else if(node.tagName == 'SPAN'){
+            // if <span> exists, just add a new formatting class
+            let span = node;
+            span.classList.add(name);
+          }
+        }
+        
+        range.insertNode(doc_fragment);
       }
       
-      sel.insertNode(doc_fragment);
     }
     
     
@@ -333,43 +417,13 @@ bindFormattingListener("remove-format", function(name, e){
       let container = range.startContainer;
       
       if(nodeType(container.parentNode) == "SPAN"){
-        // 
-        // we need to divide the parent element up
-        // 
-        
-        // console.log("contained within span");
         let parent = container.parentNode;
-        let grandparent = parent.parentNode;
+        split = splitNode(parent, range);
         
-        let str = parent.innerText;
-        console.log(str);
-        
-        var p1 = parent.cloneNode(); // don't copy inner text
-        let p2 = parent.cloneNode(); // don't copy inner text
-        let p3 = parent;
-        
-        grandparent.insertBefore(p2, p3);
-        grandparent.insertBefore(p1, p2);
-        
-        // inclusive on bottom end, exclusive on top end
-          // startOffset
-          // endOffset
-        
-        p1.textContent = str.substring(0, range.startOffset);
-        p2.textContent = str.substring(range.startOffset, range.endOffset);
-        p3.textContent = str.substring(range.endOffset);
-        
-        // p1.textContent = p3.textContent;
-        
-        
-        // 
-        // now we can replace the p2 with just a Text node to remove formatting
-        // 
-        let text = document.createTextNode(p2.textContent);
-        grandparent.replaceChild(text, p2);
+        // replace the p2 with just a Text node to remove formatting
+        let text = document.createTextNode(split.p2.textContent);
+        split.grandparent.replaceChild(text, split.p2);
       }
-      // TODO: ^ apply similar logic to adding formatting inside an area where there is already formatting, in order to prevent creation of nested tags
-      
       
     }else{
       // selection is on the boundary between tags
@@ -387,11 +441,7 @@ bindFormattingListener("remove-format", function(name, e){
     
     
     mergeTagFragments(node);
-    
-    
-    // FIXME: Can't un-format the middle of a section of text
-      // selection that cross the boundary of two spans are fine (presumably they're similar to span / Text boundaries) but not selections that are completely contained with some <span> tag
-    
+    removeEmptyChildren(node);
     
     // TODO: make sure same formatting is not applied twice (aka if we're already in a "bold" section, don't apply bold style again. actually, if the user does that action, should probably remove the bold style instead.)
     
