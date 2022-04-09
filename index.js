@@ -35,6 +35,104 @@ function getCurrentBlock(node){
   }
 }
 
+// useful for converting classList to Array
+// (the type is actually DOMTokenList, but this name is easier to remember)
+function toArray(list){
+  var array = Array(list.length);
+  for(let i=0; i < list.length; i++){
+    array[i] = list[i];
+  }
+  return array;
+}
+
+function eachEqual(a, b){
+  // https://masteringjs.io/tutorials/fundamentals/compare-arrays
+  if(a.length === b.length){
+    return Array.from(a).every((val, index) => b.contains(val));
+  }else{
+    return false;
+  }
+}
+
+// related to Node.nodeType, but different
+// Returns #Text for text nodes, and the node name for HTML tags
+function nodeType(node){
+  if(node instanceof Text){
+    return "#Text";
+  }else{
+    return node.nodeName;
+  }
+}
+
+function nodesSimilar(n1, n2){
+  let t1 = nodeType(n1);
+  let t2 = nodeType(n2);
+  
+  if(t1 == t2){
+    if(t1 == "#Text"){
+      return true;
+    }else{
+      return eachEqual(n1, n2);
+    }
+  }
+  else{
+    return false;
+  }
+}
+
+
+function mergeTagFragments(node){
+  let children = node.childNodes;
+  let classes = null;
+  let type = null;
+  
+  let i=0;
+  while(i < children.length){
+    // find a cluster of similar nodes
+    // + all text nodes are similar,
+    // + all <span> tags with the same classes are similiar    
+    type = nodeType(children[i]);
+    classes = children[i].classList;
+    
+    console.log("cluster");
+    let j = i+1;
+    while(j < children.length){
+      console.log(children[i], children[j]);
+      if(nodesSimilar(children[i], children[j]))
+      {
+        console.log('similar');
+        j++
+      }else{
+        break;
+      }
+    }
+    
+    
+    // iterate over this cluster and merge them
+    // (k is an index for elements of the cluster beyond the first)
+      // TODO: figure out a way to do this with fewer DOM updates
+    console.log('merge fragments', i,j);
+    for(let k=i+1; k<j; k++){
+      if(type == "#Text"){
+        
+      }else if(type == "SPAN"){
+        console.log(children[k]);
+        children[i].textContent += children[k].textContent;
+      }
+    }
+    // if you remove an element from the DOM, it disappears from the list of children. Thus, you can't remove inside the loop above. You also need to start from the end and walk backwards, so that the indices of the things you want to remove don't get shuffled around.
+    for(let k=j-1; k>i; k--){
+      children[k].remove();
+    }
+    
+    console.log('-----');
+    
+    // jump to next chunk
+      // (wait, for the same reasons above, w.r.t to the indicies, shouldn't this be a problem too? why doesn't this cause problems? is it because of the outer loop invariant?)
+    i = j;
+  }
+}
+
 
 
 console.log("init page");
@@ -115,6 +213,8 @@ function applyFormatting(name){
   var endNode = getCurrentBlock(selection.focusNode);
   
   if(startNode == endNode){
+    let block = startNode;
+    
     // https://stackoverflow.com/questions/6328718/how-to-wrap-surround-highlighted-text-with-an-element
     
     
@@ -145,7 +245,7 @@ function applyFormatting(name){
     
     
     // clean up - merge tag fragments
-    
+    mergeTagFragments(block);
     
     
     
