@@ -326,19 +326,71 @@ bindFormattingListener("remove-format", function(name, e){
     
     // https://stackoverflow.com/questions/15001625/clear-format-in-range
     
-    let doc_fragment = range.extractContents();
+    console.log(range);
     
-    console.log(doc_fragment);
+    if(range.startContainer == range.endContainer){
+      // selection is completely contained with some existing element
+      let container = range.startContainer;
+      
+      if(nodeType(container.parentNode) == "SPAN"){
+        // 
+        // we need to divide the parent element up
+        // 
+        
+        // console.log("contained within span");
+        let parent = container.parentNode;
+        let grandparent = parent.parentNode;
+        
+        let str = parent.innerText;
+        console.log(str);
+        
+        var p1 = parent.cloneNode(); // don't copy inner text
+        let p2 = parent.cloneNode(); // don't copy inner text
+        let p3 = parent;
+        
+        grandparent.insertBefore(p2, p3);
+        grandparent.insertBefore(p1, p2);
+        
+        // inclusive on bottom end, exclusive on top end
+          // startOffset
+          // endOffset
+        
+        p1.textContent = str.substring(0, range.startOffset);
+        p2.textContent = str.substring(range.startOffset, range.endOffset);
+        p3.textContent = str.substring(range.endOffset);
+        
+        // p1.textContent = p3.textContent;
+        
+        
+        // 
+        // now we can replace the p2 with just a Text node to remove formatting
+        // 
+        let text = document.createTextNode(p2.textContent);
+        grandparent.replaceChild(text, p2);
+      }
+      // TODO: ^ apply similar logic to adding formatting inside an area where there is already formatting, in order to prevent creation of nested tags
+      
+      
+    }else{
+      // selection is on the boundary between tags
+      // so creating a doc fragment will create the pieces we need
+      let doc_fragment = range.extractContents();
+      
+      console.log(doc_fragment);
+      
+      let text = document.createTextNode(doc_fragment.textContent);
+      range.deleteContents();
+      range.insertNode(text);
+      range.selectNodeContents(text);
+    }
     
-    let text = document.createTextNode(doc_fragment.textContent);
-    range.deleteContents();
-    range.insertNode(text);
-    // range.selectNodeContents(text);
+    
     
     mergeTagFragments(node);
     
     
     // FIXME: Can't un-format the middle of a section of text
+      // selection that cross the boundary of two spans are fine (presumably they're similar to span / Text boundaries) but not selections that are completely contained with some <span> tag
     
     
     // TODO: make sure same formatting is not applied twice (aka if we're already in a "bold" section, don't apply bold style again. actually, if the user does that action, should probably remove the bold style instead.)
