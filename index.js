@@ -553,6 +553,8 @@ function manageUrlToolbar(clickedArea, e){
     openUrlToolbarAt(e.layerX, target.offsetTop+target.offsetHeight);
     
     setUrlToolbarValue(target.href);
+  }else{
+    closeUrlToolbar();
   }
 }
 
@@ -595,6 +597,11 @@ function openUrlToolbarAt(x,y){
   triangle_node.style.marginRight = `auto`;
 }
 
+function closeUrlToolbar(){
+  let classes = document.querySelector("#url-editor-toolbar").classList;
+  classes.add("invisible");
+}
+
 function setUrlToolbarValue(url){
   let node = document.querySelector("#url-editor-toolbar input[name=url]");
   
@@ -615,6 +622,9 @@ bindUrlEditorListener("check", function(name, e){
   
   url = getUrlToolbarValue();
   link_node.href = url;
+  // ^ setting href expands URL to full format
+  // feeback: show user the expanded URL
+  setUrlToolbarValue(link_node.href);
 });
 
 bindUrlEditorListener("link-slash", function(name, e){
@@ -624,13 +634,14 @@ bindUrlEditorListener("link-slash", function(name, e){
   link_node.href = "";
   
   removeEmptyChildLinks(getCurrentBlock(link_node));
+  
+  closeUrlToolbar();
 });
 
 bindUrlEditorListener("window-close", function(name, e){
   console.log(name);
   
-  let classes = document.querySelector("#url-editor-toolbar").classList;
-  classes.add("invisible");
+  closeUrlToolbar();
 });
 
 
