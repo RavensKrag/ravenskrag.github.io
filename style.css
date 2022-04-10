@@ -112,13 +112,17 @@ ul > li::marker{
 #editor-toolbar{
   position: absolute;
   height: 2em;
-  width: 15ch;
+  width: 18ch;
   
   /*background: #2D2A2E;*/
   background: #ffffff;
   
   border-radius: 0.28rem;
   padding: 0px 0.5ch;
+  
+  border: 2px;
+  border-style: solid;
+  border-color: #000000;
 }
 
 #editor-toolbar.visible{
