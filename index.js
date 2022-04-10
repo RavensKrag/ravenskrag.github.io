@@ -151,6 +151,26 @@ function mergeTagFragments(node){
   }
 }
 
+function removeEmptyChildLinks(node){
+  console.log('remove empty links:', node);
+  
+  let children = node.childNodes
+  for(let i=children.length-1; i>=0; i--){
+    // remove <a> on child element if child is empty
+    
+    let child = children[i];
+    if(nodeType(child) == "A" && child.getAttribute("href") == ""){
+      // console.log(child)
+      // child.remove();
+      // ^ this removes the <a> and all contents entirely
+      // that's not what I want - I want to remove the anchor, but keep the stuff inside the anchor
+      
+      let text = document.createTextNode(child.textContent);
+      child.replaceWith(text);
+    }
+  }
+}
+
 function removeEmptyChildren(node){
   let children = node.childNodes
   for(let i=children.length-1; i>=0; i--){
@@ -602,6 +622,8 @@ bindUrlEditorListener("link-slash", function(name, e){
   
   setUrlToolbarValue("");
   link_node.href = "";
+  
+  removeEmptyChildLinks(getCurrentBlock(link_node));
 });
 
 bindUrlEditorListener("window-close", function(name, e){
