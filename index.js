@@ -348,6 +348,10 @@ bindFormattingListener("underline", function(name, e){
   applyFormatting(name);
 });
 
+bindFormattingListener("highlighter", function(name, e){
+  applyFormatting(name);
+});
+
 // TODO: implement adding links to existing text
 // TODO: implement removing links
 // TODO: implement editing existing links
@@ -355,9 +359,7 @@ bindFormattingListener("link", function(name, e){
   console.log(name);
 });
 
-bindFormattingListener("highlighter", function(name, e){
-  applyFormatting(name);
-});
+
 
 
 
