@@ -219,7 +219,7 @@ bindButtonListener("editorjs", function(clickedArea, e){
   // move the toolbar
   toolbar_node.setAttribute(
     "style", 
-    `left: ${currentBlock.offsetLeft + currentBlock.offsetWidth/2 - toolbar_width/2}px; top: calc(${currentBlock.offsetTop}px - ${1.8*rem}px)`
+    `left: ${currentBlock.offsetLeft + currentBlock.offsetWidth/2 - toolbar_width/2}px; top: calc(${currentBlock.offsetTop}px - ${2.0*rem}px)`
   );
   
   
