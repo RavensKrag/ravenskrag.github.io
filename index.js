@@ -360,6 +360,15 @@ bindFormattingListener("link", function(name, e){
 });
 
 
+bindFormattingListener("window-close", function(name, e){
+  console.log(name);
+  
+  let classes = document.querySelector("#editor-toolbar").classList;
+  classes.remove("visible");
+  classes.add("invisible");
+});
+
+
 
 
 
