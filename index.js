@@ -514,18 +514,30 @@ bindFormattingListener("remove-format", function(name, e){
 // manage url toolbar
 function manageUrlToolbar(clickedArea, e){
   console.log("area event:", e);
+  
+  let target = e.target;
+  console.log(target);
+  console.log(nodeType(target));
+  if(nodeType(target) == 'A'){
+    let body = document.getElementsByTagName("body")[0];
+    
+    let rem = window
+          .getComputedStyle(body)
+          .getPropertyValue('font-size')
+          .match(/\d+/);
+    
+    openUrlToolbarAt(e.layerX, target.offsetTop+target.offsetHeight);
+    
+    setUrlToolbarValue(target.href);
+  }
+}
+
+function openUrlToolbarAt(x,y){
   let toolbar_node = document.getElementById("url-editor-toolbar");
   
   toolbar_node.classList.remove('invisible');
   
-  let body = document.getElementsByTagName("body")[0];
-  
-  let rem = window
-        .getComputedStyle(body)
-        .getPropertyValue('font-size')
-        .match(/\d+/);
-  
-  let x_pos = e.layerX - toolbar_node.offsetWidth/2;
+  let x_pos = x - toolbar_node.offsetWidth/2;
   
   // move the toolbar
   let l = clickedArea.offsetLeft;
@@ -534,7 +546,7 @@ function manageUrlToolbar(clickedArea, e){
                 l,
                 l+w-toolbar_node.offsetWidth);
   toolbar_node.style.left = `${x_pos}px`;
-  toolbar_node.style.top = `calc(${e.layerY}px + ${1.0*rem}px`;
+  toolbar_node.style.top = `${y}px`;
   
   
   
@@ -548,7 +560,7 @@ function manageUrlToolbar(clickedArea, e){
   // center triangle by offseting div by width/2
   let tri_x_margin = 10;
   
-  let tri_x_pos = e.layerX;
+  let tri_x_pos = x;
   tri_x_pos = tri_x_pos - toolbar_node.offsetLeft;
   tri_x_pos = clamp(tri_x_pos,
                     tri_x_margin,
@@ -559,9 +571,20 @@ function manageUrlToolbar(clickedArea, e){
   triangle_node.style.marginRight = `auto`;
 }
 
+function setUrlToolbarValue(url){
+  let node = document.querySelector("#url-editor-toolbar input[name=url]");
+  
+  console.log(node);
+  node.value = url;
+}
+
 // click events don't allow you to use links as links. perhaps because contenteditable == true? perhaps because of the JS events that are bound?
 
-bindUrlEditorListener("arrow-left", function(name, e){
+bindUrlEditorListener("check", function(name, e){
+  console.log(name);
+});
+
+bindUrlEditorListener("link-slash", function(name, e){
   console.log(name);
 });
 
