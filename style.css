@@ -145,8 +145,6 @@ div.invisible{
   border: 2px;
   border-style: solid;
   border-color: #000000;
-  
-  'visible'
 }
 
 
@@ -184,6 +182,32 @@ div.invisible{
 #url-editor-toolbar .triangle-up{
   margin: 0px auto;
 }
+
+
+
+
+
+#editor-mode-controls{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  
+  position: absolute;
+  height: 2em;
+  width: 8ch;
+  
+  /*background: #2D2A2E;*/
+  background: #ffffff;
+  
+  border-radius: 0.28rem;
+  padding: 0px 0.5ch;
+  
+  border: 2px;
+  border-style: solid;
+  border-color: #939393;
+}
+
 
 
 

@@ -1,3 +1,10 @@
+function clamp(number, min, max){
+  // https://stackoverflow.com/questions/11409895/whats-the-most-elegant-way-to-cap-a-number-to-a-segment
+  
+  return Math.max(min, Math.min(number, max));
+}
+
+
 function bindButtonListener(id, fn){
   clickedArea = document.getElementById(id);
   clickedArea.addEventListener("click", (e) => { fn(clickedArea, e);}, false);
@@ -524,11 +531,37 @@ function manageUrlToolbar(clickedArea, e){
         .getPropertyValue('font-size')
         .match(/\d+/);
   
+  let x_pos = e.layerX - toolbar_width/2;
+  
   // move the toolbar
-  toolbar_node.setAttribute(
-    "style", 
-    `left: ${e.layerX - toolbar_width/2}px; top: calc(${e.layerY}px + ${1.0*rem}px)`
-  );
+  x_pos = clamp(x_pos, 220, 650-toolbar_width);
+    // TODO: ^ get the proper positions of the left and right edge of the container, rather than hard-coding values like this
+  toolbar_node.style.left = `${x_pos}px`;
+  toolbar_node.style.top = `calc(${e.layerY}px + ${1.0*rem}px`;
+  
+  
+  
+  
+  
+  let triangle_node = document.querySelector("#url-editor-toolbar .triangle-up");
+  
+  // get layer position of click
+  // convert to position relative to toolbar_node
+  // clamp position to be within margin
+  let tri_x_margin = 10;
+  
+  let toolbar_x_pos = toolbar_node.style.left.match(/\d+/);
+  
+  console.log(toolbar_node.style.left);
+  
+  let tri_x_pos = e.layerX;
+  tri_x_pos = tri_x_pos - toolbar_x_pos;
+  tri_x_pos = clamp(tri_x_pos,
+                    tri_x_margin,
+                    toolbar_width - tri_x_margin);
+  
+  triangle_node.style.marginLeft = `${tri_x_pos}px`;
+  triangle_node.style.marginRight = `auto`;
 }
 
 // click events don't allow you to use links as links. perhaps because contenteditable == true? perhaps because of the JS events that are bound?
