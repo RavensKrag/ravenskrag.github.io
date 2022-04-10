@@ -119,8 +119,10 @@ ul > li::marker{
   
   border-radius: 0.28rem;
   padding: 0px 0.5ch;
+  
   border: 2px;
   border-style: solid;
+  border-color: #000000;
 }
 
 #editor-toolbar.visible{
