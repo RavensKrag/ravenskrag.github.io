@@ -633,7 +633,9 @@ bindUrlEditorListener("link-slash", function(name, e){
   setUrlToolbarValue("");
   link_node.href = "";
   
-  removeEmptyChildLinks(getCurrentBlock(link_node));
+  let block = getCurrentBlock(link_node);
+  removeEmptyChildLinks(block);
+  mergeTagFragments(block);
   
   closeUrlToolbar();
 });
