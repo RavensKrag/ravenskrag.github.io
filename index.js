@@ -198,7 +198,7 @@ bindButtonListener("editorjs", function(clickedArea, e){
   
   // make toolbar visible
   toolbar_node = document.getElementById("editor-toolbar");
-  toolbar_node.classList = ['visible'];
+  toolbar_node.classList.remove('invisible')
     
   // do things with the toolbar
   toolbar_width = 
@@ -364,7 +364,6 @@ bindFormattingListener("window-close", function(name, e){
   console.log(name);
   
   let classes = document.querySelector("#editor-toolbar").classList;
-  classes.remove("visible");
   classes.add("invisible");
 });
 
