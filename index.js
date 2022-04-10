@@ -13,6 +13,12 @@ function bindUrlEditorListener(name, fn){
   node.addEventListener("click", (e) => { fn(name, e);}, false);
 }
 
+function bindEditorModeListener(name, fn){
+  node = document.querySelector(`#editor-mode-controls .fa-${name}`);
+  node.addEventListener("click", (e) => { fn(name, e);}, false);
+}
+
+
 
 // clear selection
 function clearSelection(){
@@ -197,35 +203,47 @@ bindButtonListener("editorjs", function(clickedArea, e){
   clickedArea.setAttribute("contenteditable", true);
   activeArea = clickedArea; // global variable
   
-  manageFormattingToolbar(e);
+  manageFormattingToolbar(clickedArea, e);
   
-  manageUrlToolbar(e);
+  manageUrlToolbar(clickedArea, e);
+  
+  manageEditorMode(clickedArea, e);
 });
 
 
 
 
+
+
+
+
+
+
+
+
+
+
 // manage formatting toolbar
-function manageFormattingToolbar(e){  
+function manageFormattingToolbar(clickedArea, e){  
   // make toolbar visible
   let toolbar_node = document.getElementById("editor-toolbar");
   toolbar_node.classList.remove('invisible')
     
   // do things with the toolbar
-  toolbar_width = 
+  let toolbar_width = 
         window
         .getComputedStyle(toolbar_node)
         .getPropertyValue('width')
         .match(/\d+/);
   
-  body = document.getElementsByTagName("body")[0];
+  let body = document.getElementsByTagName("body")[0];
   
-  rem = window
+  let rem = window
         .getComputedStyle(body)
         .getPropertyValue('font-size')
         .match(/\d+/);
   
-  currentBlock = getCurrentBlock(e.target);
+  let currentBlock = getCurrentBlock(e.target);
   
   // move the toolbar
   toolbar_node.setAttribute(
@@ -481,23 +499,35 @@ bindFormattingListener("remove-format", function(name, e){
 
 
 
+
+
+
+
+
 // manage url toolbar
-function manageUrlToolbar(e){
+function manageUrlToolbar(clickedArea, e){
   console.log("area event:", e);
-  let url_node = document.getElementById("url-editor-toolbar");
+  let toolbar_node = document.getElementById("url-editor-toolbar");
   
-  url_node.classList.remove('invisible')
+  toolbar_node.classList.remove('invisible')
   
-  let url_editor_width = 
+  let toolbar_width = 
         window
-        .getComputedStyle(url_node)
+        .getComputedStyle(toolbar_node)
         .getPropertyValue('width')
         .match(/\d+/);
   
+  let body = document.getElementsByTagName("body")[0];
+  
+  let rem = window
+        .getComputedStyle(body)
+        .getPropertyValue('font-size')
+        .match(/\d+/);
+  
   // move the toolbar
-  url_node.setAttribute(
+  toolbar_node.setAttribute(
     "style", 
-    `left: ${e.clientX - url_editor_width/2}px; top: calc(${e.clientY}px + ${1.0*rem}px)`
+    `left: ${e.layerX - toolbar_width/2}px; top: calc(${e.layerY}px + ${1.0*rem}px)`
   );
 }
 
@@ -512,4 +542,63 @@ bindUrlEditorListener("window-close", function(name, e){
   
   let classes = document.querySelector("#url-editor-toolbar").classList;
   classes.add("invisible");
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// manage editor mode controls
+function manageEditorMode(clickedArea, e){
+  // let currentBlock = getCurrentBlock(e.target);
+  
+  console.log("area event:", e);
+  let toolbar_node = document.getElementById("editor-mode-controls");
+  
+  toolbar_node.classList.remove('invisible');
+  
+  let toolbar_width = 
+        window
+        .getComputedStyle(toolbar_node)
+        .getPropertyValue('width')
+        .match(/\d+/);
+  
+  let body = document.getElementsByTagName("body")[0];
+  
+  let rem = window
+        .getComputedStyle(body)
+        .getPropertyValue('font-size')
+        .match(/\d+/);
+  
+  // move the toolbar
+  toolbar_node.setAttribute(
+    "style", 
+    `left: ${clickedArea.offsetLeft + clickedArea.offsetWidth - toolbar_width}px; top: calc(${clickedArea.offsetTop}px - ${2.0*rem}px)`
+  );
+}
+
+// click events don't allow you to use links as links. perhaps because contenteditable == true? perhaps because of the JS events that are bound?
+
+bindEditorModeListener("check", function(name, e){
+  // console.log(name);
+  console.log("save edits");
+});
+
+bindEditorModeListener("xmark", function(name, e){
+  // console.log(name);
+  console.log("cancel edits");
+  
+  // let classes = document.querySelector("#url-editor-toolbar").classList;
+  // classes.add("invisible");
 });
