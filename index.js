@@ -410,16 +410,91 @@ bindFormattingListener("highlighter", function(name, e){
 });
 
 // TODO: implement adding links to existing text
-// TODO: implement removing links
-// TODO: implement editing existing links
 bindFormattingListener("link", function(name, e){
   console.log(name);
+  
+  
+  
+  selection = window.getSelection()
+  // console.log(activeArea);
+  // console.log(selection);
+  
+  // for now, can't deal with selections that cross boundaries of different tags (like from h2 into p)
+  
+  var startNode = getCurrentBlock(selection.anchorNode);
+  var endNode = getCurrentBlock(selection.focusNode);
+  
+  if(startNode == endNode){
+    let block = startNode;
+    
+    let range = selection.getRangeAt(0);
+    
+    let doc_fragment = range.extractContents();
+    
+    // console.log(doc_fragment);
+    
+    for(node of doc_fragment.childNodes){
+      let type = nodeType(node);
+      
+      if(type == '#Text'){
+        // this is raw text
+        // NO-OP
+        
+      }else if(type == 'SPAN'){
+        // strip span formatting and get raw text
+        let span = node;
+        
+        let text = document.createTextNode(span.textContent);
+        doc_fragment.replaceChild(text, span);
+        
+      }else if(type == 'A'){
+        // if it's an anchor, just leave it be
+        let anchor = node;
+        
+      }
+    }
+    
+    mergeTagFragments(doc_fragment);
+    
+    
+    // now you have text nodes, anchor nodes
+    // (but no more span nodes)
+    
+    // now we can wrap all the raw text in anchor nodes
+    let children = doc_fragment.childNodes;
+    for(let i=0; i<children.length; i++){
+      let child = children[i];
+      
+      let type = nodeType(child);
+      
+      if(type == '#Text'){
+        // this is raw text
+        let anchor = document.createElement("a");
+        anchor.textContent = child.textContent;
+        anchor.href = "#"
+        doc_fragment.replaceChild(anchor, child);
+        
+      }else if(type == 'A'){
+        // if it's an anchor, just leave it be
+        let anchor = node;
+        
+      }
+    }
+    
+    
+    
+    // now we put the edited fragment back into the main document
+    range.insertNode(doc_fragment);
+    
+    
+    mergeTagFragments(block);
+    // removeEmptyChildren(block);
+  }
+  
 });
 
 
 bindFormattingListener("window-close", function(name, e){
-  console.log(name);
-  
   let classes = document.querySelector("#editor-toolbar").classList;
   classes.add("invisible");
 });
