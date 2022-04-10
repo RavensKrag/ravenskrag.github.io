@@ -87,10 +87,14 @@ function nodesSimilar(n1, n2){
   let t2 = nodeType(n2);
   
   if(t1 == t2){
-    if(t1 == "#Text"){
+    let type = t1;
+    
+    if(type == "#Text"){
       return true;
-    }else{
+    }else if(type == "SPAN"){
       return eachEqual(n1.classList, n2.classList);
+    }else if(type == "A"){
+      return n1.href == n2.href;
     }
   }
   else{
@@ -131,12 +135,7 @@ function mergeTagFragments(node){
       // TODO: figure out a way to do this with fewer DOM updates
     console.log('merge fragments', i,j);
     for(let k=i+1; k<j; k++){
-      if(type == "#Text"){
-        children[i].textContent += children[k].textContent;
-      }else if(type == "SPAN"){
-        console.log(children[k]);
-        children[i].textContent += children[k].textContent;
-      }
+      children[i].textContent += children[k].textContent;
     }
     // if you remove an element from the DOM, it disappears from the list of children. Thus, you can't remove inside the loop above. You also need to start from the end and walk backwards, so that the indices of the things you want to remove don't get shuffled around.
     for(let k=j-1; k>i; k--){
@@ -330,14 +329,14 @@ function applyFormatting(name){
             
             // console.log(doc_fragment);
             
-            let node = doc_fragment.childNodes[0];
+            let child = doc_fragment.childNodes[0];
             
             // wrap text in <span>
             let span = document.createElement("span");
             span.classList.add(name)
-            span.textContent = node.textContent;
+            span.textContent = child.textContent;
             
-            doc_fragment.replaceChild(span, node);
+            doc_fragment.replaceChild(span, child);
             
             range.insertNode(doc_fragment);
             
@@ -352,21 +351,27 @@ function applyFormatting(name){
         
         // console.log(doc_fragment);
         
-        for(node of doc_fragment.childNodes){
-          if(node instanceof Text){
+        for(child of doc_fragment.childNodes){
+          let type = nodeType(child);
+          
+          if(type == '#Text'){
             // this is raw text
             
             // wrap text in <span>
             let span = document.createElement("span");
             span.classList.add(name)
-            span.textContent = node.textContent;
+            span.textContent = child.textContent;
             
-            doc_fragment.replaceChild(span, node);
+            doc_fragment.replaceChild(span, child);
             
-          }else if(node.tagName == 'SPAN'){
+          }else if(type == 'SPAN'){
             // if <span> exists, just add a new formatting class
-            let span = node;
+            let span = child;
             span.classList.add(name);
+          }else if(type == 'A'){
+            // if it's an anchor, just leave it be
+            let anchor = child;
+            
           }
         }
         
@@ -404,17 +409,91 @@ bindFormattingListener("highlighter", function(name, e){
   applyFormatting(name);
 });
 
-// TODO: implement adding links to existing text
-// TODO: implement removing links
-// TODO: implement editing existing links
 bindFormattingListener("link", function(name, e){
   console.log(name);
+  
+  
+  
+  selection = window.getSelection()
+  // console.log(activeArea);
+  // console.log(selection);
+  
+  // for now, can't deal with selections that cross boundaries of different tags (like from h2 into p)
+  
+  var startNode = getCurrentBlock(selection.anchorNode);
+  var endNode = getCurrentBlock(selection.focusNode);
+  
+  if(startNode == endNode){
+    let block = startNode;
+    
+    let range = selection.getRangeAt(0);
+    
+    let doc_fragment = range.extractContents();
+    
+    // console.log(doc_fragment);
+    
+    for(child of doc_fragment.childNodes){
+      let type = nodeType(child);
+      
+      if(type == '#Text'){
+        // this is raw text
+        // NO-OP
+        
+      }else if(type == 'SPAN'){
+        // strip span formatting and get raw text
+        let span = child;
+        
+        let text = document.createTextNode(span.textContent);
+        doc_fragment.replaceChild(text, span);
+        
+      }else if(type == 'A'){
+        // if it's an anchor, just leave it be
+        let anchor = child;
+        
+      }
+    }
+    
+    mergeTagFragments(doc_fragment);
+    
+    
+    // now you have text nodes, anchor nodes
+    // (but no more span nodes)
+    
+    // now we can wrap all the raw text in anchor nodes
+    let children = doc_fragment.childNodes;
+    for(let i=0; i<children.length; i++){
+      let child = children[i];
+      
+      let type = nodeType(child);
+      
+      if(type == '#Text'){
+        // this is raw text
+        let anchor = document.createElement("a");
+        anchor.textContent = child.textContent;
+        anchor.href = "#"
+        doc_fragment.replaceChild(anchor, child);
+        
+      }else if(type == 'A'){
+        // if it's an anchor, just leave it be
+        let anchor = node;
+        
+      }
+    }
+    
+    
+    
+    // now we put the edited fragment back into the main document
+    range.insertNode(doc_fragment);
+    
+    
+    mergeTagFragments(block);
+    // removeEmptyChildren(block);
+  }
+  
 });
 
 
 bindFormattingListener("window-close", function(name, e){
-  console.log(name);
-  
   let classes = document.querySelector("#editor-toolbar").classList;
   classes.add("invisible");
 });
@@ -454,9 +533,9 @@ bindFormattingListener("remove-format", function(name, e){
   var endNode = getCurrentBlock(selection.focusNode);
   
   if(startNode == endNode){
-    let node = startNode;
+    let block = startNode;
     
-    console.log('node: ', node);
+    console.log('node: ', block);
     
     
     let range = selection.getRangeAt(0);
@@ -486,21 +565,43 @@ bindFormattingListener("remove-format", function(name, e){
     }else{
       // selection is on the boundary between tags
       // so creating a doc fragment will create the pieces we need
+      
+      // boundary between multiple elements
+      
       let doc_fragment = range.extractContents();
       
-      console.log(doc_fragment);
+      // console.log(doc_fragment);
       
-      let text = document.createTextNode(doc_fragment.textContent);
-      range.deleteContents();
-      range.insertNode(text);
-      range.selectNodeContents(text);
+      for(child of doc_fragment.childNodes){
+        let type = nodeType(child);
+        
+        if(type == '#Text'){
+          // this is raw text          
+          // NO-OP
+          
+        }else if(type == 'SPAN'){
+          // if <span> exists, just take the inner text
+          let span = child;
+          
+          let text = document.createTextNode(span.textContent);
+          doc_fragment.replaceChild(text, span);
+          
+          
+        }else if(type == 'A'){
+          // if it's an anchor, just leave it be
+          let anchor = child;
+          
+        }
+      }
+      
+      range.insertNode(doc_fragment);
     }
     
     
     
-    mergeTagFragments(node);
-    removeEmptyChildren(node);
-    
+    mergeTagFragments(block);
+    removeEmptyChildren(block);
+    mergeTagFragments(block);
     
     // 
     // remove <span> tags that are empty (contain 0 characters)
@@ -617,7 +718,7 @@ function getUrlToolbarValue(){
 
 // click events don't allow you to use links as links. perhaps because contenteditable == true? perhaps because of the JS events that are bound?
 
-bindUrlEditorListener("check", function(name, e){
+bindUrlEditorListener("pencil", function(name, e){
   console.log(name);
   
   url = getUrlToolbarValue();
