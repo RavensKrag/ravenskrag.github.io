@@ -329,14 +329,14 @@ function applyFormatting(name){
             
             // console.log(doc_fragment);
             
-            let node = doc_fragment.childNodes[0];
+            let child = doc_fragment.childNodes[0];
             
             // wrap text in <span>
             let span = document.createElement("span");
             span.classList.add(name)
-            span.textContent = node.textContent;
+            span.textContent = child.textContent;
             
-            doc_fragment.replaceChild(span, node);
+            doc_fragment.replaceChild(span, child);
             
             range.insertNode(doc_fragment);
             
@@ -351,8 +351,8 @@ function applyFormatting(name){
         
         // console.log(doc_fragment);
         
-        for(node of doc_fragment.childNodes){
-          let type = nodeType(node);
+        for(child of doc_fragment.childNodes){
+          let type = nodeType(child);
           
           if(type == '#Text'){
             // this is raw text
@@ -360,17 +360,17 @@ function applyFormatting(name){
             // wrap text in <span>
             let span = document.createElement("span");
             span.classList.add(name)
-            span.textContent = node.textContent;
+            span.textContent = child.textContent;
             
-            doc_fragment.replaceChild(span, node);
+            doc_fragment.replaceChild(span, child);
             
           }else if(type == 'SPAN'){
             // if <span> exists, just add a new formatting class
-            let span = node;
+            let span = child;
             span.classList.add(name);
           }else if(type == 'A'){
             // if it's an anchor, just leave it be
-            let anchor = node;
+            let anchor = child;
             
           }
         }
@@ -433,8 +433,8 @@ bindFormattingListener("link", function(name, e){
     
     // console.log(doc_fragment);
     
-    for(node of doc_fragment.childNodes){
-      let type = nodeType(node);
+    for(child of doc_fragment.childNodes){
+      let type = nodeType(child);
       
       if(type == '#Text'){
         // this is raw text
@@ -442,14 +442,14 @@ bindFormattingListener("link", function(name, e){
         
       }else if(type == 'SPAN'){
         // strip span formatting and get raw text
-        let span = node;
+        let span = child;
         
         let text = document.createTextNode(span.textContent);
         doc_fragment.replaceChild(text, span);
         
       }else if(type == 'A'){
         // if it's an anchor, just leave it be
-        let anchor = node;
+        let anchor = child;
         
       }
     }
@@ -534,9 +534,9 @@ bindFormattingListener("remove-format", function(name, e){
   var endNode = getCurrentBlock(selection.focusNode);
   
   if(startNode == endNode){
-    let node = startNode;
+    let block = startNode;
     
-    console.log('node: ', node);
+    console.log('node: ', block);
     
     
     let range = selection.getRangeAt(0);
@@ -573,8 +573,8 @@ bindFormattingListener("remove-format", function(name, e){
       
       // console.log(doc_fragment);
       
-      for(node of doc_fragment.childNodes){
-        let type = nodeType(node);
+      for(child of doc_fragment.childNodes){
+        let type = nodeType(child);
         
         if(type == '#Text'){
           // this is raw text          
@@ -582,7 +582,7 @@ bindFormattingListener("remove-format", function(name, e){
           
         }else if(type == 'SPAN'){
           // if <span> exists, just take the inner text
-          let span = node;
+          let span = child;
           
           let text = document.createTextNode(span.textContent);
           doc_fragment.replaceChild(text, span);
@@ -590,7 +590,7 @@ bindFormattingListener("remove-format", function(name, e){
           
         }else if(type == 'A'){
           // if it's an anchor, just leave it be
-          let anchor = node;
+          let anchor = child;
           
         }
       }
@@ -600,9 +600,9 @@ bindFormattingListener("remove-format", function(name, e){
     
     
     
-    mergeTagFragments(node);
-    removeEmptyChildren(node);
-    
+    mergeTagFragments(block);
+    removeEmptyChildren(block);
+    mergeTagFragments(block);
     
     // 
     // remove <span> tags that are empty (contain 0 characters)
