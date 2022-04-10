@@ -600,7 +600,8 @@ bindUrlEditorListener("check", function(name, e){
 bindUrlEditorListener("link-slash", function(name, e){
   console.log(name);
   
-  // setUrlToolbarValue("");
+  setUrlToolbarValue("");
+  link_node.href = "";
 });
 
 bindUrlEditorListener("window-close", function(name, e){
