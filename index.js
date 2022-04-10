@@ -197,10 +197,16 @@ bindButtonListener("editorjs", function(clickedArea, e){
   clickedArea.setAttribute("contenteditable", true);
   activeArea = clickedArea; // global variable
   
-  // 
-  // manage formatting toolbar
-  // 
+  manageFormattingToolbar(e);
   
+  manageUrlToolbar(e);
+});
+
+
+
+
+// manage formatting toolbar
+function manageFormattingToolbar(e){  
   // make toolbar visible
   let toolbar_node = document.getElementById("editor-toolbar");
   toolbar_node.classList.remove('invisible')
@@ -226,31 +232,7 @@ bindButtonListener("editorjs", function(clickedArea, e){
     "style", 
     `left: ${currentBlock.offsetLeft + currentBlock.offsetWidth/2 - toolbar_width/2}px; top: calc(${currentBlock.offsetTop}px - ${2.0*rem}px)`
   );
-  
-  
-  
-  // 
-  // manage url toolbar
-  // 
-  
-  console.log("area event:", e);
-  let url_node = document.getElementById("url-editor-toolbar");
-  
-  url_node.classList.remove('invisible')
-  
-  let url_editor_width = 
-        window
-        .getComputedStyle(url_node)
-        .getPropertyValue('width')
-        .match(/\d+/);
-  
-  // move the toolbar
-  url_node.setAttribute(
-    "style", 
-    `left: ${e.clientX - url_editor_width/2}px; top: calc(${e.clientY}px + ${1.0*rem}px)`
-  );
-});
-
+}
 
 
 // TODO: currently applying styles with css only. may want to look into ways to make this more accessible / add more semantic tags.
@@ -499,7 +481,27 @@ bindFormattingListener("remove-format", function(name, e){
 
 
 
+// manage url toolbar
+function manageUrlToolbar(e){
+  console.log("area event:", e);
+  let url_node = document.getElementById("url-editor-toolbar");
+  
+  url_node.classList.remove('invisible')
+  
+  let url_editor_width = 
+        window
+        .getComputedStyle(url_node)
+        .getPropertyValue('width')
+        .match(/\d+/);
+  
+  // move the toolbar
+  url_node.setAttribute(
+    "style", 
+    `left: ${e.clientX - url_editor_width/2}px; top: calc(${e.clientY}px + ${1.0*rem}px)`
+  );
+}
 
+// click events don't allow you to use links as links. perhaps because contenteditable == true? perhaps because of the JS events that are bound?
 
 bindUrlEditorListener("arrow-left", function(name, e){
   console.log(name);
