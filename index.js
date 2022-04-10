@@ -516,13 +516,7 @@ function manageUrlToolbar(clickedArea, e){
   console.log("area event:", e);
   let toolbar_node = document.getElementById("url-editor-toolbar");
   
-  toolbar_node.classList.remove('invisible')
-  
-  let toolbar_width = 
-        window
-        .getComputedStyle(toolbar_node)
-        .getPropertyValue('width')
-        .match(/\d+/);
+  toolbar_node.classList.remove('invisible');
   
   let body = document.getElementsByTagName("body")[0];
   
@@ -531,11 +525,14 @@ function manageUrlToolbar(clickedArea, e){
         .getPropertyValue('font-size')
         .match(/\d+/);
   
-  let x_pos = e.layerX - toolbar_width/2;
+  let x_pos = e.layerX - toolbar_node.offsetWidth/2;
   
   // move the toolbar
-  x_pos = clamp(x_pos, 220, 650-toolbar_width);
-    // TODO: ^ get the proper positions of the left and right edge of the container, rather than hard-coding values like this
+  let l = clickedArea.offsetLeft;
+  let w = clickedArea.offsetWidth;
+  x_pos = clamp(x_pos,
+                l,
+                l+w-toolbar_node.offsetWidth);
   toolbar_node.style.left = `${x_pos}px`;
   toolbar_node.style.top = `calc(${e.layerY}px + ${1.0*rem}px`;
   
@@ -548,17 +545,15 @@ function manageUrlToolbar(clickedArea, e){
   // get layer position of click
   // convert to position relative to toolbar_node
   // clamp position to be within margin
+  // center triangle by offseting div by width/2
   let tri_x_margin = 10;
   
-  let toolbar_x_pos = toolbar_node.style.left.match(/\d+/);
-  
-  console.log(toolbar_node.style.left);
-  
   let tri_x_pos = e.layerX;
-  tri_x_pos = tri_x_pos - toolbar_x_pos;
+  tri_x_pos = tri_x_pos - toolbar_node.offsetLeft;
   tri_x_pos = clamp(tri_x_pos,
                     tri_x_margin,
-                    toolbar_width - tri_x_margin);
+                    toolbar_node.offsetWidth - tri_x_margin);
+  tri_x_pos = tri_x_pos-triangle_node.offsetWidth/2
   
   triangle_node.style.marginLeft = `${tri_x_pos}px`;
   triangle_node.style.marginRight = `auto`;
