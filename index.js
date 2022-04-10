@@ -617,7 +617,7 @@ function getUrlToolbarValue(){
 
 // click events don't allow you to use links as links. perhaps because contenteditable == true? perhaps because of the JS events that are bound?
 
-bindUrlEditorListener("check", function(name, e){
+bindUrlEditorListener("pencil", function(name, e){
   console.log(name);
   
   url = getUrlToolbarValue();
