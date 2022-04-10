@@ -1,3 +1,10 @@
+function clamp(number, min, max){
+  // https://stackoverflow.com/questions/11409895/whats-the-most-elegant-way-to-cap-a-number-to-a-segment
+  
+  return Math.max(min, Math.min(number, max));
+}
+
+
 function bindButtonListener(id, fn){
   clickedArea = document.getElementById(id);
   clickedArea.addEventListener("click", (e) => { fn(clickedArea, e);}, false);
@@ -7,6 +14,17 @@ function bindFormattingListener(name, fn){
   node = document.querySelector(`#editor-toolbar > .fa-${name}`);
   node.addEventListener("click", (e) => { fn(name, e);}, false);
 }
+
+function bindUrlEditorListener(name, fn){
+  node = document.querySelector(`#url-editor-toolbar .fa-${name}`);
+  node.addEventListener("click", (e) => { fn(name, e);}, false);
+}
+
+function bindEditorModeListener(name, fn){
+  node = document.querySelector(`#editor-mode-controls .fa-${name}`);
+  node.addEventListener("click", (e) => { fn(name, e);}, false);
+}
+
 
 
 // clear selection
@@ -133,6 +151,26 @@ function mergeTagFragments(node){
   }
 }
 
+function removeEmptyChildLinks(node){
+  console.log('remove empty links:', node);
+  
+  let children = node.childNodes
+  for(let i=children.length-1; i>=0; i--){
+    // remove <a> on child element if child is empty
+    
+    let child = children[i];
+    if(nodeType(child) == "A" && child.getAttribute("href") == ""){
+      // console.log(child)
+      // child.remove();
+      // ^ this removes the <a> and all contents entirely
+      // that's not what I want - I want to remove the anchor, but keep the stuff inside the anchor
+      
+      let text = document.createTextNode(child.textContent);
+      child.replaceWith(text);
+    }
+  }
+}
+
 function removeEmptyChildren(node){
   let children = node.childNodes
   for(let i=children.length-1; i>=0; i--){
@@ -192,40 +230,54 @@ bindButtonListener("editorjs", function(clickedArea, e){
   clickedArea.setAttribute("contenteditable", true);
   activeArea = clickedArea; // global variable
   
-  // 
-  // manage toolbar
-  // 
+  manageFormattingToolbar(clickedArea, e);
   
+  manageUrlToolbar(clickedArea, e);
+  
+  manageEditorMode(clickedArea, e);
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// manage formatting toolbar
+function manageFormattingToolbar(clickedArea, e){  
   // make toolbar visible
-  toolbar_node = document.getElementById("editor-toolbar");
-  toolbar_node.classList = ['visible'];
+  let toolbar_node = document.getElementById("editor-toolbar");
+  toolbar_node.classList.remove('invisible')
     
   // do things with the toolbar
-  toolbar_width = 
+  let toolbar_width = 
         window
         .getComputedStyle(toolbar_node)
         .getPropertyValue('width')
         .match(/\d+/);
   
-  body = document.getElementsByTagName("body")[0];
+  let body = document.getElementsByTagName("body")[0];
   
-  rem = window
+  let rem = window
         .getComputedStyle(body)
         .getPropertyValue('font-size')
         .match(/\d+/);
   
-  currentBlock = getCurrentBlock(e.target);
+  let currentBlock = getCurrentBlock(e.target);
   
   // move the toolbar
   toolbar_node.setAttribute(
     "style", 
     `left: ${currentBlock.offsetLeft + currentBlock.offsetWidth/2 - toolbar_width/2}px; top: calc(${currentBlock.offsetTop}px - ${2.0*rem}px)`
   );
-  
-  
-  
-});
-
+}
 
 
 // TODO: currently applying styles with css only. may want to look into ways to make this more accessible / add more semantic tags.
@@ -236,14 +288,14 @@ bindButtonListener("editorjs", function(clickedArea, e){
 function applyFormatting(name){
   activeArea; // global variable
   
-  console.log(name);
+  // console.log(name);
   
   // process the text
   // (click event returns text node)
   
   selection = window.getSelection()
-  console.log(activeArea);
-  console.log(selection);
+  // console.log(activeArea);
+  // console.log(selection);
   
   // for now, can't deal with selections that cross boundaries of different tags (like from h2 into p)
   
@@ -276,7 +328,7 @@ function applyFormatting(name){
             // you're in completely unformatted territory
             let doc_fragment = range.extractContents();
             
-            console.log(doc_fragment);
+            // console.log(doc_fragment);
             
             let node = doc_fragment.childNodes[0];
             
@@ -298,7 +350,7 @@ function applyFormatting(name){
         
         let doc_fragment = range.extractContents();
         
-        console.log(doc_fragment);
+        // console.log(doc_fragment);
         
         for(node of doc_fragment.childNodes){
           if(node instanceof Text){
@@ -364,7 +416,6 @@ bindFormattingListener("window-close", function(name, e){
   console.log(name);
   
   let classes = document.querySelector("#editor-toolbar").classList;
-  classes.remove("visible");
   classes.add("invisible");
 });
 
@@ -467,4 +518,189 @@ bindFormattingListener("remove-format", function(name, e){
   
   
   // clearSelection();
+});
+
+
+
+
+
+
+
+
+
+
+
+
+// manage url toolbar
+function manageUrlToolbar(clickedArea, e){
+  link_node = null; // global variable;
+  
+  console.log("area event:", e);
+  
+  let target = e.target;
+  console.log(target);
+  console.log(nodeType(target));
+  if(nodeType(target) == 'A'){
+    link_node = target; // global variable
+    
+    let body = document.getElementsByTagName("body")[0];
+    
+    let rem = window
+          .getComputedStyle(body)
+          .getPropertyValue('font-size')
+          .match(/\d+/);
+    
+    openUrlToolbarAt(e.layerX, target.offsetTop+target.offsetHeight);
+    
+    setUrlToolbarValue(target.href);
+  }else{
+    closeUrlToolbar();
+  }
+}
+
+function openUrlToolbarAt(x,y){
+  let toolbar_node = document.getElementById("url-editor-toolbar");
+  
+  toolbar_node.classList.remove('invisible');
+  
+  let x_pos = x - toolbar_node.offsetWidth/2;
+  
+  // move the toolbar
+  let l = clickedArea.offsetLeft;
+  let w = clickedArea.offsetWidth;
+  x_pos = clamp(x_pos,
+                l,
+                l+w-toolbar_node.offsetWidth);
+  toolbar_node.style.left = `${x_pos}px`;
+  toolbar_node.style.top = `${y}px`;
+  
+  
+  
+  
+  
+  let triangle_node = document.querySelector("#url-editor-toolbar .triangle-up");
+  
+  // get layer position of click
+  // convert to position relative to toolbar_node
+  // clamp position to be within margin
+  // center triangle by offseting div by width/2
+  let tri_x_margin = 10;
+  
+  let tri_x_pos = x;
+  tri_x_pos = tri_x_pos - toolbar_node.offsetLeft;
+  tri_x_pos = clamp(tri_x_pos,
+                    tri_x_margin,
+                    toolbar_node.offsetWidth - tri_x_margin);
+  tri_x_pos = tri_x_pos-triangle_node.offsetWidth/2
+  
+  triangle_node.style.marginLeft = `${tri_x_pos}px`;
+  triangle_node.style.marginRight = `auto`;
+}
+
+function closeUrlToolbar(){
+  let classes = document.querySelector("#url-editor-toolbar").classList;
+  classes.add("invisible");
+}
+
+function setUrlToolbarValue(url){
+  let node = document.querySelector("#url-editor-toolbar input[name=url]");
+  
+  console.log(node);
+  node.value = url;
+}
+
+function getUrlToolbarValue(){
+  let node = document.querySelector("#url-editor-toolbar input[name=url]");
+  
+  return node.value;
+}
+
+// click events don't allow you to use links as links. perhaps because contenteditable == true? perhaps because of the JS events that are bound?
+
+bindUrlEditorListener("check", function(name, e){
+  console.log(name);
+  
+  url = getUrlToolbarValue();
+  link_node.href = url;
+  // ^ setting href expands URL to full format
+  // feeback: show user the expanded URL
+  setUrlToolbarValue(link_node.href);
+});
+
+bindUrlEditorListener("link-slash", function(name, e){
+  console.log(name);
+  
+  setUrlToolbarValue("");
+  link_node.href = "";
+  
+  let block = getCurrentBlock(link_node);
+  removeEmptyChildLinks(block);
+  mergeTagFragments(block);
+  
+  closeUrlToolbar();
+});
+
+bindUrlEditorListener("window-close", function(name, e){
+  console.log(name);
+  
+  closeUrlToolbar();
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// manage editor mode controls
+function manageEditorMode(clickedArea, e){
+  // let currentBlock = getCurrentBlock(e.target);
+  
+  console.log("area event:", e);
+  let toolbar_node = document.getElementById("editor-mode-controls");
+  
+  toolbar_node.classList.remove('invisible');
+  
+  let toolbar_width = 
+        window
+        .getComputedStyle(toolbar_node)
+        .getPropertyValue('width')
+        .match(/\d+/);
+  
+  let body = document.getElementsByTagName("body")[0];
+  
+  let rem = window
+        .getComputedStyle(body)
+        .getPropertyValue('font-size')
+        .match(/\d+/);
+  
+  // move the toolbar
+  toolbar_node.setAttribute(
+    "style", 
+    `left: ${clickedArea.offsetLeft + clickedArea.offsetWidth - toolbar_width}px; top: calc(${clickedArea.offsetTop}px - ${2.0*rem}px)`
+  );
+}
+
+// click events don't allow you to use links as links. perhaps because contenteditable == true? perhaps because of the JS events that are bound?
+
+bindEditorModeListener("check", function(name, e){
+  // console.log(name);
+  console.log("save edits");
+});
+
+bindEditorModeListener("xmark", function(name, e){
+  // console.log(name);
+  console.log("cancel edits");
+  
+  // let classes = document.querySelector("#url-editor-toolbar").classList;
+  // classes.add("invisible");
 });

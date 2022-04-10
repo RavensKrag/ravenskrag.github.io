@@ -109,7 +109,29 @@ ul > li::marker{
 
 
 
+
+div.triangle-up{
+  /*https://css-tricks.com/snippets/css/css-triangle/*/
+  width: 0; 
+  height: 0; 
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  
+  border-bottom: 5px solid black;
+
+}
+
+div.invisible{
+  display: none !important;
+}
+
+
 #editor-toolbar{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  
   position: absolute;
   height: 2em;
   width: 18ch;
@@ -125,18 +147,67 @@ ul > li::marker{
   border-color: #000000;
 }
 
-#editor-toolbar.visible{
-  /*display: block;*/
+
+#url-editor-toolbar{
+  top: 100px;
   
+  position: absolute;
+}
+
+#url-editor-toolbar input[name=url]{
+  width: calc(40ch - 9ch);
+}
+
+#url-editor-toolbar > .controls{
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  
+  height: 2.5em;
+  width: 40ch;
+  
+  /*background: #2D2A2E;*/
+  background: #ffffff;
+  
+  border-radius: 0.28rem;
+  padding: 0px 0.5ch;
+  
+  border: 2px;
+  border-style: solid;
+  border-color: #000000;
+  
 }
 
-#editor-toolbar.invisible{
-  display: none;
+#url-editor-toolbar .triangle-up{
+  margin: 0px auto;
 }
+
+
+
+
+
+#editor-mode-controls{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  
+  position: absolute;
+  height: 2em;
+  width: 8ch;
+  
+  /*background: #2D2A2E;*/
+  background: #ffffff;
+  
+  border-radius: 0.28rem;
+  padding: 0px 0.5ch;
+  
+  border: 2px;
+  border-style: solid;
+  border-color: #939393;
+}
+
 
 
 
