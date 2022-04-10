@@ -8,6 +8,11 @@ function bindFormattingListener(name, fn){
   node.addEventListener("click", (e) => { fn(name, e);}, false);
 }
 
+function bindUrlEditorListener(name, fn){
+  node = document.querySelector(`#url-editor-toolbar .fa-${name}`);
+  node.addEventListener("click", (e) => { fn(name, e);}, false);
+}
+
 
 // clear selection
 function clearSelection(){
@@ -193,11 +198,11 @@ bindButtonListener("editorjs", function(clickedArea, e){
   activeArea = clickedArea; // global variable
   
   // 
-  // manage toolbar
+  // manage formatting toolbar
   // 
   
   // make toolbar visible
-  toolbar_node = document.getElementById("editor-toolbar");
+  let toolbar_node = document.getElementById("editor-toolbar");
   toolbar_node.classList.remove('invisible')
     
   // do things with the toolbar
@@ -224,6 +229,26 @@ bindButtonListener("editorjs", function(clickedArea, e){
   
   
   
+  // 
+  // manage url toolbar
+  // 
+  
+  console.log("area event:", e);
+  let url_node = document.getElementById("url-editor-toolbar");
+  
+  url_node.classList.remove('invisible')
+  
+  let url_editor_width = 
+        window
+        .getComputedStyle(url_node)
+        .getPropertyValue('width')
+        .match(/\d+/);
+  
+  // move the toolbar
+  url_node.setAttribute(
+    "style", 
+    `left: ${e.clientX - url_editor_width/2}px; top: calc(${e.clientY}px + ${1.0*rem}px)`
+  );
 });
 
 
@@ -236,14 +261,14 @@ bindButtonListener("editorjs", function(clickedArea, e){
 function applyFormatting(name){
   activeArea; // global variable
   
-  console.log(name);
+  // console.log(name);
   
   // process the text
   // (click event returns text node)
   
   selection = window.getSelection()
-  console.log(activeArea);
-  console.log(selection);
+  // console.log(activeArea);
+  // console.log(selection);
   
   // for now, can't deal with selections that cross boundaries of different tags (like from h2 into p)
   
@@ -276,7 +301,7 @@ function applyFormatting(name){
             // you're in completely unformatted territory
             let doc_fragment = range.extractContents();
             
-            console.log(doc_fragment);
+            // console.log(doc_fragment);
             
             let node = doc_fragment.childNodes[0];
             
@@ -298,7 +323,7 @@ function applyFormatting(name){
         
         let doc_fragment = range.extractContents();
         
-        console.log(doc_fragment);
+        // console.log(doc_fragment);
         
         for(node of doc_fragment.childNodes){
           if(node instanceof Text){
@@ -466,4 +491,23 @@ bindFormattingListener("remove-format", function(name, e){
   
   
   // clearSelection();
+});
+
+
+
+
+
+
+
+
+
+bindUrlEditorListener("arrow-left", function(name, e){
+  console.log(name);
+});
+
+bindUrlEditorListener("window-close", function(name, e){
+  console.log(name);
+  
+  let classes = document.querySelector("#url-editor-toolbar").classList;
+  classes.add("invisible");
 });
