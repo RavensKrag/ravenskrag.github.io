@@ -87,10 +87,14 @@ function nodesSimilar(n1, n2){
   let t2 = nodeType(n2);
   
   if(t1 == t2){
-    if(t1 == "#Text"){
+    let type = t1;
+    
+    if(type == "#Text"){
       return true;
-    }else{
+    }else if(type == "SPAN"){
       return eachEqual(n1.classList, n2.classList);
+    }else if(type == "A"){
+      return n1.href == n2.href;
     }
   }
   else{
@@ -131,12 +135,7 @@ function mergeTagFragments(node){
       // TODO: figure out a way to do this with fewer DOM updates
     console.log('merge fragments', i,j);
     for(let k=i+1; k<j; k++){
-      if(type == "#Text"){
-        children[i].textContent += children[k].textContent;
-      }else if(type == "SPAN"){
-        console.log(children[k]);
-        children[i].textContent += children[k].textContent;
-      }
+      children[i].textContent += children[k].textContent;
     }
     // if you remove an element from the DOM, it disappears from the list of children. Thus, you can't remove inside the loop above. You also need to start from the end and walk backwards, so that the indices of the things you want to remove don't get shuffled around.
     for(let k=j-1; k>i; k--){
@@ -353,7 +352,9 @@ function applyFormatting(name){
         // console.log(doc_fragment);
         
         for(node of doc_fragment.childNodes){
-          if(node instanceof Text){
+          let type = nodeType(node);
+          
+          if(type == '#Text'){
             // this is raw text
             
             // wrap text in <span>
@@ -363,10 +364,14 @@ function applyFormatting(name){
             
             doc_fragment.replaceChild(span, node);
             
-          }else if(node.tagName == 'SPAN'){
+          }else if(type == 'SPAN'){
             // if <span> exists, just add a new formatting class
             let span = node;
             span.classList.add(name);
+          }else if(type == 'A'){
+            // if it's an anchor, just leave it be
+            let anchor = node;
+            
           }
         }
         
