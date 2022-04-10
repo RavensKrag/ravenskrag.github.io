@@ -409,7 +409,6 @@ bindFormattingListener("highlighter", function(name, e){
   applyFormatting(name);
 });
 
-// TODO: implement adding links to existing text
 bindFormattingListener("link", function(name, e){
   console.log(name);
   
