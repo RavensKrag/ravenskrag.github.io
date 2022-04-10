@@ -491,14 +491,36 @@ bindFormattingListener("remove-format", function(name, e){
     }else{
       // selection is on the boundary between tags
       // so creating a doc fragment will create the pieces we need
+      
+      // boundary between multiple elements
+      
       let doc_fragment = range.extractContents();
       
-      console.log(doc_fragment);
+      // console.log(doc_fragment);
       
-      let text = document.createTextNode(doc_fragment.textContent);
-      range.deleteContents();
-      range.insertNode(text);
-      range.selectNodeContents(text);
+      for(node of doc_fragment.childNodes){
+        let type = nodeType(node);
+        
+        if(type == '#Text'){
+          // this is raw text          
+          // NO-OP
+          
+        }else if(type == 'SPAN'){
+          // if <span> exists, just take the inner text
+          let span = node;
+          
+          let text = document.createTextNode(span.textContent);
+          doc_fragment.replaceChild(text, span);
+          
+          
+        }else if(type == 'A'){
+          // if it's an anchor, just leave it be
+          let anchor = node;
+          
+        }
+      }
+      
+      range.insertNode(doc_fragment);
     }
     
     
