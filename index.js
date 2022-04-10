@@ -513,12 +513,16 @@ bindFormattingListener("remove-format", function(name, e){
 
 // manage url toolbar
 function manageUrlToolbar(clickedArea, e){
+  link_node = null; // global variable;
+  
   console.log("area event:", e);
   
   let target = e.target;
   console.log(target);
   console.log(nodeType(target));
   if(nodeType(target) == 'A'){
+    link_node = target; // global variable
+    
     let body = document.getElementsByTagName("body")[0];
     
     let rem = window
@@ -578,14 +582,25 @@ function setUrlToolbarValue(url){
   node.value = url;
 }
 
+function getUrlToolbarValue(){
+  let node = document.querySelector("#url-editor-toolbar input[name=url]");
+  
+  return node.value;
+}
+
 // click events don't allow you to use links as links. perhaps because contenteditable == true? perhaps because of the JS events that are bound?
 
 bindUrlEditorListener("check", function(name, e){
   console.log(name);
+  
+  url = getUrlToolbarValue();
+  link_node.href = url;
 });
 
 bindUrlEditorListener("link-slash", function(name, e){
   console.log(name);
+  
+  // setUrlToolbarValue("");
 });
 
 bindUrlEditorListener("window-close", function(name, e){
