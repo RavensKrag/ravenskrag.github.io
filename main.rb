@@ -18,9 +18,10 @@ end
 # 
 # send webpage
 # 
+set :public_folder, __dir__ + '/docs'
+
 get '/' do
-  f = File.read('index.html')
-  script_tag = 
+  f = File.read('./docs/index.html')
   
   doc = Nokogiri::HTML(f)
   
@@ -40,31 +41,6 @@ get '/' do
   
   doc.to_html
 end
-
-get '/*.js' do |js_file|
-  send_file "#{js_file}.js"
-end
-
-get '/profile_pic.png' do
-  send_file 'profile_pic.png'
-end
-
-get '/style.css' do
-  send_file 'style.css'
-end
-
-get '/semantic/*' do |name|
-  send_file "semantic/#{name}"
-end
-
-get '/editorjs/*' do |name|
-  send_file "editorjs/#{name}"
-end
-
-get '/fontawesome-free/*' do |name|
-  send_file "fontawesome-free/#{name}"
-end
-
 
 
 # 
