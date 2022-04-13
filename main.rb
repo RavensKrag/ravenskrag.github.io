@@ -55,5 +55,10 @@ end
 
 # client -> server
 post '/api/foo' do
+  # parse arguments sent via AJAX call from the client
   p params['key']
+  
+  
+  # send data back to JS on the client
+  "<p>ruby to JS</p>"
 end

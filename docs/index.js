@@ -801,6 +801,9 @@ bindEditorModeListener("check", function(name, e){
     'key' : "js to ruby"
   }
   
+  
+  // https://lelandkrych.wordpress.com/2017/02/19/sinatra-and-ajax/
+  // Posted on February 19, 2017 by lelandkrych 
   $.ajax({
     type     : 'POST',
     url      : '/api/foo',
