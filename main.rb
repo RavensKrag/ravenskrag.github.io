@@ -48,7 +48,7 @@ end
 # JSON REST API endpoint
 # 
 
-get '/api/foo' do
+post '/api/foo' do
   # parse arguments sent via AJAX call from the client
   p params['key']
   
