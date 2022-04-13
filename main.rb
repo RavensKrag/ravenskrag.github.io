@@ -2,6 +2,7 @@
 require 'bundler'
 Bundler.require
 
+require "sinatra/reloader" if development?
 require 'yaml'
 
 puts "Sinatra starting soon"
@@ -46,3 +47,13 @@ end
 # 
 # JSON REST API endpoint
 # 
+
+# server -> client
+get '/api/foo' do
+  "hello world"
+end
+
+# client -> server
+post '/api/foo' do
+  p params['key']
+end
