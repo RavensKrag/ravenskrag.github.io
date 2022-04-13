@@ -48,13 +48,7 @@ end
 # JSON REST API endpoint
 # 
 
-# server -> client
 get '/api/foo' do
-  "hello world"
-end
-
-# client -> server
-post '/api/foo' do
   # parse arguments sent via AJAX call from the client
   p params['key']
   

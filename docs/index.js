@@ -805,8 +805,9 @@ bindEditorModeListener("check", function(name, e){
   // https://lelandkrych.wordpress.com/2017/02/19/sinatra-and-ajax/
   // Posted on February 19, 2017 by lelandkrych 
   $.ajax({
-    type     : 'POST',
+    type     : 'GET',
     url      : '/api/foo',
+    cache    : false, // only works with HEAD and GET
     data     : formData, // our data object
     dataType : 'html', // type of server response
     encode   : true
