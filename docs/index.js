@@ -798,7 +798,11 @@ bindEditorModeListener("check", function(name, e){
   console.log("save edits");
   
   var formData = {
-    'key' : "js to ruby"
+    'key' : "js to ruby",
+  }
+  
+  if(activeArea != null){
+    formData['data'] = activeArea.outerHTML;
   }
   
   // https://api.jquery.com/jquery.ajax/
