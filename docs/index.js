@@ -796,6 +796,35 @@ function manageEditorMode(clickedArea, e){
 bindEditorModeListener("check", function(name, e){
   // console.log(name);
   console.log("save edits");
+  
+  var formData = {
+    'key' : "js to ruby",
+  }
+  
+  if(activeArea != null){
+    formData['data'] = activeArea.outerHTML;
+  }
+  
+  // https://api.jquery.com/jquery.ajax/
+  
+  
+  // https://lelandkrych.wordpress.com/2017/02/19/sinatra-and-ajax/
+  // Posted on February 19, 2017 by lelandkrych 
+  $.ajax({
+    type     : 'POST', // POST never caches, but GET does
+    url      : '/api/foo',
+    data     : formData, // our data object
+    dataType : 'html', // type of server response
+    encode   : true
+  }).done(function(data) {
+  // using the done promise callback
+    // log data to the console so we can see
+    console.log(data);
+    console.log(data.success);
+    
+    
+    // here we will handle errors and validation messages
+  });
 });
 
 bindEditorModeListener("xmark", function(name, e){
