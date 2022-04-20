@@ -82,6 +82,9 @@ post '/api/foo' do
     File.write(filepath, doc.to_html)
   end
   
+  
+  # TODO: send message back to JS on client, saying whether or not the HTML was actually changed. If no change needed to be made, you don't really need to refresh the page. (but it's all local anyway, so it doesn't really matter in terms of performance, I guess?)
+  
   # send data back to JS on the client
   "<p>ruby to JS</p>"
 end

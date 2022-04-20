@@ -193,12 +193,17 @@ div.invisible{
   justify-content: space-around;
   align-items: center;
   
-  position: absolute;
+  position: fixed;
+  /*left: auto;*/
+  right: 10px;
+  top: 10px;
+  
   height: 2em;
   width: 8ch;
   
   /*background: #2D2A2E;*/
   background: #ffffff;
+  opacity: 0.25;
   
   border-radius: 0.28rem;
   padding: 0px 0.5ch;
@@ -206,6 +211,26 @@ div.invisible{
   border: 2px;
   border-style: solid;
   border-color: #939393;
+}
+
+#editor-mode-controls div{
+  /*padding: 0.0ch 0.5ch;*/
+  height: 1.5em;
+  width: 1.5em;
+  
+  background: #DEE0E2;
+  
+  text-align: center;
+}
+/*
+#editor-mode-controls div span{
+  
+}
+*/
+#editor-mode-controls .selected{
+  
+  background: #9176DC;
+  
 }
 
 

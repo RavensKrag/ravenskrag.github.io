@@ -21,7 +21,7 @@ function bindUrlEditorListener(name, fn){
 }
 
 function bindEditorModeListener(name, fn){
-  node = document.querySelector(`#editor-mode-controls .fa-${name}`);
+  node = document.querySelector(`#editor-mode-controls .${name}`);
   node.addEventListener("click", (e) => { fn(name, e);}, false);
 }
 
@@ -216,24 +216,193 @@ function splitNode(parent, range){
 
 
 
+
+
+
+
 console.log("init page");
 
 
-bindButtonListener("editorjs", function(clickedArea, e){
-  console.log("area clicked:", clickedArea, e);
+
+
+
+
+
+var editor = {
+  initialize : function(){
+    this.mode = 'use';
+    this.states = new Map();
+    
+    
+    let toolbar_node = document.getElementById("editor-mode-controls");
+    
+    toolbar_node.classList.remove('invisible');
+    
+    
+    bindButtonListener("editorjs",
+      function(clickedArea, e){
+        editor.onClick(clickedArea, e);
+      }
+    );
+  },
+  
+  // try to swich modes. fire events only when actually switching from one mode to another.
+  setMode : function(mode_name){
+    console.log('mode change requested')
+    
+    if(this.mode == mode_name){
+      // if mode is unchanged, just bail out early
+      return;
+    }
+    
+    console.log('changing mode -> ', mode_name);
+    
+    // process exit state events
+    this.states.get(this.mode).disable();
+    
+    // update visual indicator of mode state
+    let root = document.querySelector("#editor-mode-controls");
+    
+    let n = root.children.length
+    for(let i=0; i<n; i++){
+      root.children[i].classList.remove('selected');
+    }
+    
+    let node = document.querySelector(`#editor-mode-controls > .${mode_name}-mode`);
+  
+    node.classList.add('selected');
+    
+    // process enter state events
+    this.states.get(mode_name).enable();
+    
+    // set the name of the new state
+    this.mode = mode_name;
+  },
+  
+  
   
   // 
-  // enable editing
+  // establish delegates
   // 
   
-  clickedArea.setAttribute("contenteditable", true);
-  activeArea = clickedArea; // global variable
+  // enable : function(){
+  //   this.states[this.mode].enable();
+  // }
   
-  manageFormattingToolbar(clickedArea, e);
+  onClick : function (clickedArea, e){  
+    this.states.get(this.mode).onClick(clickedArea, e);
+  },
   
-  manageUrlToolbar(clickedArea, e);
+  disable : function (){
+    this.states.get(this.mode).disable();
+  },
+}
+
+editor.initialize();
+
+editor.states.set('use', {
+  enable : function(){
+    // NO-OP
+  },
   
-  manageEditorMode(clickedArea, e);
+  // manage formatting toolbar
+  onClick : function (clickedArea, e){  
+    // NO-OP
+  },
+  
+  disable : function (){
+    // NO-OP
+  }
+});
+
+editor.states.set('edit', {
+  enable : function(){
+    this.activeArea = null;
+  },
+  
+  // manage formatting toolbar
+  onClick : function (clickedArea, e){
+    console.log("area clicked:", clickedArea, e);
+    
+    clickedArea.setAttribute("contenteditable", true);
+    this.activeArea = clickedArea; // global variable
+    
+    manageUrlToolbar(clickedArea, e);
+    manageEditorToolbar(clickedArea, e);
+  },
+  
+  disable : function (){
+    if(this.activeArea != null){
+      saveEdits(this.activeArea);
+      this.activeArea.removeAttribute("contenteditable");
+      this.activeArea = null; // global variable
+    }
+    
+    let classes = document.querySelector("#editor-toolbar").classList;
+    classes.add("invisible");
+  }
+});
+
+
+
+
+function saveEdits(activeArea){
+  // console.log(name);
+  console.log("save edits");
+  
+  var formData = {
+    'key' : "js to ruby",
+  }
+  
+  if(activeArea != null){
+    formData['data'] = activeArea.outerHTML;
+  }
+  
+  // https://api.jquery.com/jquery.ajax/
+  
+  
+  // https://lelandkrych.wordpress.com/2017/02/19/sinatra-and-ajax/
+  // Posted on February 19, 2017 by lelandkrych 
+  $.ajax({
+    type     : 'POST', // POST never caches, but GET does
+    url      : '/api/foo',
+    data     : formData, // our data object
+    dataType : 'html', // type of server response
+    encode   : true
+  }).done(function(data) {
+  // using the done promise callback
+    // log data to the console so we can see
+    console.log(data);
+    console.log(data.success);
+    
+    
+    // here we will handle errors and validation messages
+  });
+}
+
+
+
+bindEditorModeListener("use-mode", function(name, e){
+  // if(editor_mode == 'use'){
+  //   return;
+  // }
+  // editor_mode = 'use';
+  
+  
+  console.log('mode:', name);
+  editor.setMode('use');
+  
+});
+
+bindEditorModeListener("edit-mode", function(name, e){
+  // if(editor_mode == 'edit'){
+  //   return;
+  // }
+  // editor_mode = 'edit';
+  
+  
+  console.log('mode:', name);
+  editor.setMode('edit');
 });
 
 
@@ -249,12 +418,19 @@ bindButtonListener("editorjs", function(clickedArea, e){
 
 
 
-// manage formatting toolbar
-function manageFormattingToolbar(clickedArea, e){  
+
+
+
+
+
+
+
+
+function manageEditorToolbar(clickedArea, e){
   // make toolbar visible
   let toolbar_node = document.getElementById("editor-toolbar");
   toolbar_node.classList.remove('invisible')
-    
+  
   // do things with the toolbar
   let toolbar_width = 
         window
@@ -278,22 +454,18 @@ function manageFormattingToolbar(clickedArea, e){
   );
 }
 
-
 // TODO: currently applying styles with css only. may want to look into ways to make this more accessible / add more semantic tags.
 
 
 // TODO: prevent creation of zero-width spans (spans with no characters inside them)
 
 function applyFormatting(name){
-  activeArea; // global variable
-  
   // console.log(name);
   
   // process the text
   // (click event returns text node)
   
   selection = window.getSelection()
-  // console.log(activeArea);
   // console.log(selection);
   
   // for now, can't deal with selections that cross boundaries of different tags (like from h2 into p)
@@ -415,7 +587,6 @@ bindFormattingListener("link", function(name, e){
   
   
   selection = window.getSelection()
-  // console.log(activeArea);
   // console.log(selection);
   
   // for now, can't deal with selections that cross boundaries of different tags (like from h2 into p)
@@ -494,8 +665,7 @@ bindFormattingListener("link", function(name, e){
 
 
 bindFormattingListener("window-close", function(name, e){
-  let classes = document.querySelector("#editor-toolbar").classList;
-  classes.add("invisible");
+  editor.disable();
 });
 
 
@@ -524,7 +694,6 @@ bindFormattingListener("remove-format", function(name, e){
   // (click event returns text node)
   
   selection = window.getSelection()
-  console.log(activeArea);
   console.log(selection);
   
   // for now, can't deal with selections that cross boundaries of different tags (like from h2 into p)
@@ -757,80 +926,3 @@ bindUrlEditorListener("window-close", function(name, e){
 
 
 
-
-
-
-
-
-// manage editor mode controls
-function manageEditorMode(clickedArea, e){
-  // let currentBlock = getCurrentBlock(e.target);
-  
-  console.log("area event:", e);
-  let toolbar_node = document.getElementById("editor-mode-controls");
-  
-  toolbar_node.classList.remove('invisible');
-  
-  let toolbar_width = 
-        window
-        .getComputedStyle(toolbar_node)
-        .getPropertyValue('width')
-        .match(/\d+/);
-  
-  let body = document.getElementsByTagName("body")[0];
-  
-  let rem = window
-        .getComputedStyle(body)
-        .getPropertyValue('font-size')
-        .match(/\d+/);
-  
-  // move the toolbar
-  toolbar_node.setAttribute(
-    "style", 
-    `left: ${clickedArea.offsetLeft + clickedArea.offsetWidth - toolbar_width}px; top: calc(${clickedArea.offsetTop}px - ${2.0*rem}px)`
-  );
-}
-
-// click events don't allow you to use links as links. perhaps because contenteditable == true? perhaps because of the JS events that are bound?
-
-bindEditorModeListener("check", function(name, e){
-  // console.log(name);
-  console.log("save edits");
-  
-  var formData = {
-    'key' : "js to ruby",
-  }
-  
-  if(activeArea != null){
-    formData['data'] = activeArea.outerHTML;
-  }
-  
-  // https://api.jquery.com/jquery.ajax/
-  
-  
-  // https://lelandkrych.wordpress.com/2017/02/19/sinatra-and-ajax/
-  // Posted on February 19, 2017 by lelandkrych 
-  $.ajax({
-    type     : 'POST', // POST never caches, but GET does
-    url      : '/api/foo',
-    data     : formData, // our data object
-    dataType : 'html', // type of server response
-    encode   : true
-  }).done(function(data) {
-  // using the done promise callback
-    // log data to the console so we can see
-    console.log(data);
-    console.log(data.success);
-    
-    
-    // here we will handle errors and validation messages
-  });
-});
-
-bindEditorModeListener("xmark", function(name, e){
-  // console.log(name);
-  console.log("cancel edits");
-  
-  // let classes = document.querySelector("#url-editor-toolbar").classList;
-  // classes.add("invisible");
-});
