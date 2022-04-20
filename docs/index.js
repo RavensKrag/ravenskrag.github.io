@@ -228,7 +228,7 @@ console.log("init page");
 
 
 
-var toolbar = {
+var editor = {
   initialize : function(){
     this.mode = 'use';
     this.states = new Map();
@@ -243,7 +243,7 @@ var toolbar = {
       function(clickedArea, e){
         console.log("area clicked:", clickedArea, e);
         
-        toolbar.onClick(clickedArea, e);
+        editor.onClick(clickedArea, e);
       }
     );
   },
@@ -300,9 +300,9 @@ var toolbar = {
   },
 }
 
-toolbar.initialize();
+editor.initialize();
 
-toolbar.states.set('use', {
+editor.states.set('use', {
   enable : function(){
     // NO-OP
   },
@@ -317,7 +317,7 @@ toolbar.states.set('use', {
   }
 });
 
-toolbar.states.set('edit', {
+editor.states.set('edit', {
   enable : function(){
     this.activeArea = null;
   },
@@ -390,7 +390,7 @@ bindEditorModeListener("use-mode", function(name, e){
   
   
   console.log('mode:', name);
-  toolbar.setMode('use');
+  editor.setMode('use');
   
 });
 
@@ -402,7 +402,7 @@ bindEditorModeListener("edit-mode", function(name, e){
   
   
   console.log('mode:', name);
-  toolbar.setMode('edit');
+  editor.setMode('edit');
 });
 
 
@@ -665,7 +665,7 @@ bindFormattingListener("link", function(name, e){
 
 
 bindFormattingListener("window-close", function(name, e){
-  toolbar.disable();
+  editor.disable();
 });
 
 
