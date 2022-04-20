@@ -229,7 +229,7 @@ bindButtonListener("editorjs", function(clickedArea, e){
   clickedArea.setAttribute("contenteditable", true);
   activeArea = clickedArea; // global variable
   
-  manageFormattingToolbar(clickedArea, e);
+  toolbar.enable(clickedArea, e);
   
   manageUrlToolbar(clickedArea, e);
   
@@ -246,36 +246,40 @@ bindButtonListener("editorjs", function(clickedArea, e){
 
 
 
-
-
-
-// manage formatting toolbar
-function manageFormattingToolbar(clickedArea, e){  
-  // make toolbar visible
-  let toolbar_node = document.getElementById("editor-toolbar");
-  toolbar_node.classList.remove('invisible')
+var toolbar = {
+  // manage formatting toolbar
+  enable : function (clickedArea, e){  
+    // make toolbar visible
+    let toolbar_node = document.getElementById("editor-toolbar");
+    toolbar_node.classList.remove('invisible')
+      
+    // do things with the toolbar
+    let toolbar_width = 
+          window
+          .getComputedStyle(toolbar_node)
+          .getPropertyValue('width')
+          .match(/\d+/);
     
-  // do things with the toolbar
-  let toolbar_width = 
-        window
-        .getComputedStyle(toolbar_node)
-        .getPropertyValue('width')
-        .match(/\d+/);
+    let body = document.getElementsByTagName("body")[0];
+    
+    let rem = window
+          .getComputedStyle(body)
+          .getPropertyValue('font-size')
+          .match(/\d+/);
+    
+    let currentBlock = getCurrentBlock(e.target);
+    
+    // move the toolbar
+    toolbar_node.setAttribute(
+      "style", 
+      `left: ${currentBlock.offsetLeft + currentBlock.offsetWidth/2 - toolbar_width/2}px; top: calc(${currentBlock.offsetTop}px - ${2.0*rem}px)`
+    );
+  },
   
-  let body = document.getElementsByTagName("body")[0];
-  
-  let rem = window
-        .getComputedStyle(body)
-        .getPropertyValue('font-size')
-        .match(/\d+/);
-  
-  let currentBlock = getCurrentBlock(e.target);
-  
-  // move the toolbar
-  toolbar_node.setAttribute(
-    "style", 
-    `left: ${currentBlock.offsetLeft + currentBlock.offsetWidth/2 - toolbar_width/2}px; top: calc(${currentBlock.offsetTop}px - ${2.0*rem}px)`
-  );
+  disable : function (){
+    let classes = document.querySelector("#editor-toolbar").classList;
+    classes.add("invisible");
+  }
 }
 
 
@@ -494,8 +498,7 @@ bindFormattingListener("link", function(name, e){
 
 
 bindFormattingListener("window-close", function(name, e){
-  let classes = document.querySelector("#editor-toolbar").classList;
-  classes.add("invisible");
+  toolbar.disable();
 });
 
 
@@ -800,7 +803,7 @@ bindEditorModeListener("use-mode", function(name, e){
   editor_mode = 'use';
   
   
-  console.log(editor_mode);
+  console.log('mode:', editor_mode);
   
 });
 
@@ -811,7 +814,7 @@ bindEditorModeListener("edit-mode", function(name, e){
   editor_mode = 'edit';
   
   
-  console.log(editor_mode);
+  console.log('mode:', editor_mode);
   
 });
 
