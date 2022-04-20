@@ -21,7 +21,7 @@ function bindUrlEditorListener(name, fn){
 }
 
 function bindEditorModeListener(name, fn){
-  node = document.querySelector(`#editor-mode-controls .fa-${name}`);
+  node = document.querySelector(`#editor-mode-controls .${name}`);
   node.addEventListener("click", (e) => { fn(name, e);}, false);
 }
 
@@ -760,7 +760,7 @@ bindUrlEditorListener("window-close", function(name, e){
 
 
 
-
+var editor_mode = 'use' // 'use' or 'edit'
 
 // manage editor mode controls
 function manageEditorMode(clickedArea, e){
@@ -784,16 +784,39 @@ function manageEditorMode(clickedArea, e){
         .getPropertyValue('font-size')
         .match(/\d+/);
   
-  // move the toolbar
-  toolbar_node.setAttribute(
-    "style", 
-    `left: ${clickedArea.offsetLeft + clickedArea.offsetWidth - toolbar_width}px; top: calc(${clickedArea.offsetTop}px - ${2.0*rem}px)`
-  );
+  // // move the toolbar
+  // toolbar_node.setAttribute(
+  //   "style", 
+  //   `left: ${clickedArea.offsetLeft + clickedArea.offsetWidth - toolbar_width}px; top: calc(${clickedArea.offsetTop}px - ${2.0*rem}px)`
+  // );
 }
 
 // click events don't allow you to use links as links. perhaps because contenteditable == true? perhaps because of the JS events that are bound?
 
-bindEditorModeListener("check", function(name, e){
+bindEditorModeListener("use-mode", function(name, e){
+  if(editor_mode == 'use'){
+    return;
+  }
+  editor_mode = 'use';
+  
+  
+  console.log(editor_mode);
+  
+});
+
+bindEditorModeListener("edit-mode", function(name, e){
+  if(editor_mode == 'edit'){
+    return;
+  }
+  editor_mode = 'edit';
+  
+  
+  console.log(editor_mode);
+  
+});
+
+
+function saveEdits(){
   // console.log(name);
   console.log("save edits");
   
@@ -825,12 +848,4 @@ bindEditorModeListener("check", function(name, e){
     
     // here we will handle errors and validation messages
   });
-});
-
-bindEditorModeListener("xmark", function(name, e){
-  // console.log(name);
-  console.log("cancel edits");
-  
-  // let classes = document.querySelector("#url-editor-toolbar").classList;
-  // classes.add("invisible");
-});
+}
