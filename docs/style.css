@@ -214,7 +214,7 @@ div.invisible{
 
 /*select the container itself*/
 #main{
-  margin-top: 1.5rem;
+  padding-top: 1.5rem;
   /*position: center;*/
   margin-left: auto;
   margin-right: auto;
