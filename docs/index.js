@@ -237,6 +237,15 @@ var toolbar = {
     let toolbar_node = document.getElementById("editor-mode-controls");
     
     toolbar_node.classList.remove('invisible');
+    
+    
+    bindButtonListener("editorjs",
+      function(clickedArea, e){
+        console.log("area clicked:", clickedArea, e);
+        
+        toolbar.onClick(clickedArea, e);
+      }
+    );
   },
   
   // try to swich modes. fire events only when actually switching from one mode to another.
@@ -405,11 +414,7 @@ bindEditorModeListener("edit-mode", function(name, e){
 
 
 
-bindButtonListener("editorjs", function(clickedArea, e){
-  console.log("area clicked:", clickedArea, e);
-  
-  toolbar.onClick(clickedArea, e);
-});
+
 
 
 
