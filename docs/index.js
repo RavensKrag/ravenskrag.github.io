@@ -241,8 +241,6 @@ var editor = {
     
     bindButtonListener("editorjs",
       function(clickedArea, e){
-        console.log("area clicked:", clickedArea, e);
-        
         editor.onClick(clickedArea, e);
       }
     );
@@ -324,6 +322,8 @@ editor.states.set('edit', {
   
   // manage formatting toolbar
   onClick : function (clickedArea, e){
+    console.log("area clicked:", clickedArea, e);
+    
     clickedArea.setAttribute("contenteditable", true);
     this.activeArea = clickedArea; // global variable
     
